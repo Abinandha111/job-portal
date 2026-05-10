@@ -2,8 +2,12 @@ import { useState } from "react";
 import axios from "axios";
 import "./AddJob.css";
 import { useNavigate } from "react-router-dom";
+import API from "./data/api";
 
 export default function AddJob() {
+
+
+  const token = localStorage.getItem("token");
 
     const navigate = useNavigate();
 
@@ -28,8 +32,13 @@ export default function AddJob() {
     try {
 
       const res = await axios.post(
-        "http://localhost:5000/api/job/add",
-        form
+        `${API}/api/jobs`,
+        form,
+        {
+         headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
       );
 
      

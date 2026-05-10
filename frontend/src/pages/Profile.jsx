@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "./Profile.css";
+import API from "./data/api";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -21,7 +22,7 @@ export default function Profile() {
         const token = localStorage.getItem("token");
 
         const res = await axios.get(
-          "http://localhost:5000/api/user/profile",
+          `${API}/api/user/profile`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -54,7 +55,7 @@ export default function Profile() {
       const token = localStorage.getItem("token");
 
       const res = await axios.put(
-        "http://localhost:5000/api/user/update",
+        `${API}/api/user/update`,
         form,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -79,7 +80,7 @@ export default function Profile() {
       const token = localStorage.getItem("token");
 
       const res = await axios.post(
-        "http://localhost:5000/api/user/upload",
+        `${API}/api/user/upload`,
         formData,
         {
           headers: {
@@ -124,7 +125,7 @@ export default function Profile() {
             <img
               src={
                 user.image
-                  ? `http://localhost:5000/upload/${user.image}`
+                  ? `${API}/upload/${user.image}`
                   : "https://via.placeholder.com/100"
               }
               className="profile-img"

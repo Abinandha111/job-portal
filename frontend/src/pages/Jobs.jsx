@@ -3,6 +3,7 @@ import axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import API from "./data/api";
 
 
 export default function Jobs() {
@@ -17,7 +18,7 @@ export default function Jobs() {
     try {
 
       const res = await axios.get(
-        "http://localhost:5000/api/job"
+        `${API}/api/jobs`
       );
 
       setJobs(res.data);
@@ -43,7 +44,7 @@ export default function Jobs() {
     const token = localStorage.getItem("token");
 
     const res = await axios.post(
-      "http://localhost:5000/api/application/apply",
+      `${API}/api/application/apply`,
       { jobId },
       {
         headers: {
