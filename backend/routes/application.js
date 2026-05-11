@@ -24,4 +24,24 @@ router.post("/apply", authMiddleware, async (req, res) => {
   }
 });
 
+// GET APPLIED JOBS
+router.get("/my-applications", authMiddleware, async (req, res) => {
+
+  try {
+
+    const applications = await Application.find({
+      userId: req.user.userId
+    }).populate("jobId");
+
+    res.json(applications);
+
+  } catch (error) {
+
+    res.status(500).json({
+      error: error.message
+    });
+
+  }
+});
+
 module.exports = router;
