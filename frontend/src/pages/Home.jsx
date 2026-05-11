@@ -1,4 +1,5 @@
 import "./Home.css";
+import { Link } from "react-router-dom";
 
 export default function Home() {
   return (
@@ -8,13 +9,14 @@ export default function Home() {
 
       <p>Explore thousands of job opportunities with top companies.</p>
 
-      <a href="/jobs">
-        <button>Explore Jobs</button>
-      </a>
+      <Link to="/jobs">
+        <button className="explore-btn">Explore Jobs</button>
+      </Link>
+      <Link to="/login">
+  <button className="login-btn">Login</button>
+</Link>
 
-      <a href="/login">
-        <button className="login-btn">Login</button>
-      </a>
+      
 
       <div className="search">
         <input type="text" placeholder="Search for jobs..." />
