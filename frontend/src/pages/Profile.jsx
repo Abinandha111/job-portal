@@ -14,6 +14,9 @@ export default function Profile() {
 
   const [editMode, setEditMode] = useState(false);
   const [form, setForm] = useState({ username: "", email: "", password: "" });
+  const [phone, setPhone] = useState("");
+  const [bio, setBio] = useState("");
+  const [skills, setSkills] = useState("");
 
   // FETCH USER
   useEffect(() => {
@@ -27,6 +30,11 @@ export default function Profile() {
         );
 
         setUser(res.data);
+
+        setPhone(res.data.phone || "");
+        setBio(res.data.bio || "");
+        setSkills(res.data.skills || "");
+
         setLoading(false);
       } catch (err) {
         console.log(err);
@@ -100,6 +108,36 @@ export default function Profile() {
     }
   };
 
+  const handleUpdate = async () => {
+
+  try {
+
+    const token = localStorage.getItem("token");
+
+    const res = await axios.put(
+      `${API}/api/user/update`,
+      {
+        phone,
+        bio,
+        skills
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
+    alert("Profile updated successfully ✅");
+
+  } catch (error) {
+
+    console.log(error);
+    alert("Update failed ❌");
+
+  }
+};
+
   if (loading) return <h2>Loading...</h2>;
   if (!user) return <h2>No user data found</h2>;
 
@@ -170,6 +208,12 @@ export default function Profile() {
             ...form, password: e.target.value 
           })}
           placeholder="New Password" />
+
+          <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone"/>
+
+          <textarea value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Bio" />
+
+          <input value={skills} onChange={(e) => setSkills(e.target.value)} placeholder="Skills" />
 
               <button onClick={updateProfile}>Save</button>
               <button onClick={() => setEditMode(false)}>Cancel</button>
