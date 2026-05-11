@@ -67,4 +67,28 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// UPDATE JOB
+router.put("/:id", async (req, res) => {
+  try {
+
+    const updatedJob = await Job.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+
+    res.json({
+      message: "Job updated successfully",
+      job: updatedJob
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      error: error.message
+    });
+
+  }
+});
+
 module.exports = router;
