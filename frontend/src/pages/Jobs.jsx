@@ -117,6 +117,9 @@ const handleEdit = async (job) => {
       <Link to="/add-job">
         <button className="add-job-btn"> + Add Job</button>
       </Link>
+      <Link to="/applied-jobs">
+        <button className="applied-jobs-btn">My Applied Jobs</button>
+      </Link>
 
       <div className="search-box">
         <input
