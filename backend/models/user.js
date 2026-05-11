@@ -17,7 +17,21 @@ const userSchema = new mongoose.Schema({
    image: {
     type: String,
     default: ""
-  }
+  },
+  phone: {
+  type: String,
+  default: ""
+},
+
+bio: {
+  type: String,
+  default: ""
+},
+
+skills: {
+  type: String,
+  default: ""
+}
 });
 
 module.exports = mongoose.model("User", userSchema);
