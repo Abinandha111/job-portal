@@ -61,6 +61,24 @@ export default function Jobs() {
   }
 };
 
+const handleDelete = async (id) => {
+
+  try {
+
+    await axios.delete(`${API}/api/job/${id}`);
+
+    alert("Job deleted successfully ✅");
+
+    setJobs(jobs.filter((job) => job._id !== id));
+
+  } catch (error) {
+
+    console.log(error);
+    alert("Delete failed ❌");
+
+  }
+};
+
   return (
     <div className="jobs-page">
 
@@ -88,11 +106,16 @@ export default function Jobs() {
             <p><b>Location:</b> {job.location}</p>
             <p><b>Salary:</b> {job.salary}</p>
             <button onClick={() => handleApply(job._id)}>Apply Now</button>
+            <button onClick={() => handleDelete(job._id)}>
+  Delete Job
+</button>
         </div>
         ))
     ) : (
         <p>No jobs found 😢</p>
   )}
+
+  
 
 </div>
 
