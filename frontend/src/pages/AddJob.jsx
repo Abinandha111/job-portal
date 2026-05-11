@@ -32,7 +32,7 @@ export default function AddJob() {
     try {
 
       const res = await axios.post(
-        `${API}/api/jobs`,
+        `${API}/api/job`,
         form,
         {
          headers: {
