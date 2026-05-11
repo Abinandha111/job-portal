@@ -194,6 +194,23 @@
   background: #2a2a2a;
 }
 
+.status {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.status.active {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status.inactive {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
 /* EDIT BUTTON (LinkedIn blue style) */
 .edit-btn {
   margin-top: 10px;

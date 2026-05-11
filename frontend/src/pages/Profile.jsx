@@ -210,7 +210,15 @@ export default function Profile() {
 
   <div className="stat-box">
     <h4>Status</h4>
-    <p>Active</p>
+    <p className={`status ${
+    user?.status === "Inactive"
+      ? "inactive"
+      : user?.status === "Active"
+      ? "active"
+      : "active"
+    }`}> {
+      user?.status || "Active"
+    }</p>
   </div>
 
 </div>
