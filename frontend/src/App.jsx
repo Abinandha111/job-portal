@@ -9,6 +9,7 @@ import Register from "./pages/Register";
 import Jobs from "./pages/Jobs";
 import Profile from "./pages/Profile";
 import AddJob from "./pages/AddJob";
+import AppliedJobs from "./pages/AppliedJob";
 
 
 export default function App() {
@@ -23,6 +24,7 @@ export default function App() {
         <Route path="/jobs" element={<ProtectedRoute><Jobs /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/add-job" element={<AddJob />} />
+        <Route path="/applied-jobs" element={<AppliedJobs />} />
         
         
       </Routes>
