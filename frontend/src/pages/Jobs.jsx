@@ -79,6 +79,37 @@ const handleDelete = async (id) => {
   }
 };
 
+const handleEdit = async (job) => {
+
+  const newTitle = prompt("Enter new title", job.title);
+
+  if (!newTitle) return;
+
+  try {
+
+    await axios.put(`${API}/api/job/${job._id}`, {
+      ...job,
+      title: newTitle
+    });
+
+    alert("Job updated successfully ✅");
+
+    setJobs(
+      jobs.map((j) =>
+        j._id === job._id
+          ? { ...j, title: newTitle }
+          : j
+      )
+    );
+
+  } catch (error) {
+
+    console.log(error);
+    alert("Update failed ❌");
+
+  }
+};
+
   return (
     <div className="jobs-page">
 
@@ -106,9 +137,8 @@ const handleDelete = async (id) => {
             <p><b>Location:</b> {job.location}</p>
             <p><b>Salary:</b> {job.salary}</p>
             <button onClick={() => handleApply(job._id)}>Apply Now</button>
-            <button onClick={() => handleDelete(job._id)}>
-  Delete Job
-</button>
+            <button onClick={() => handleDelete(job._id)}>Delete Job</button>
+            <button onClick={() => handleEdit(job)}>Edit Job</button>
         </div>
         ))
     ) : (
