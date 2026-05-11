@@ -157,6 +157,7 @@ export default function Profile() {
               Logout
             </button>
           </div>
+           <div className="cover-banner"></div>
 
           {/* PROFILE TOP */}
           <div className="profile-top">
@@ -171,6 +172,19 @@ export default function Profile() {
 
             <h2>{user.username}</h2>
             <p className="email">{user.email}</p>
+          
+
+             <div className="bio-section">
+            <p>{bio || "No bio added yet..."}</p>
+          </div>
+          <div className="skills-section">
+            {skills &&
+              skills.split(",").map((skill, i) => (
+                <span key={i} className="skill-tag">
+                  {skill.trim()}
+                </span>
+              ))}
+          </div>
           </div>
           
 
@@ -181,6 +195,23 @@ export default function Profile() {
               <p>{user._id.slice(0, 8)}...</p>
             </div>
           </div>
+
+           <div className="stats">
+          <div>
+            <h4>Applied</h4>
+            <p>12</p>
+          </div>
+
+          <div>
+            <h4>Saved</h4>
+            <p>5</p>
+          </div>
+
+          <div>
+            <h4>Status</h4>
+            <p>Active</p>
+          </div>
+        </div>
 
           {/* EDIT */}
           <button className="edit-btn" onClick={openEdit}>
