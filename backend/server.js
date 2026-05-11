@@ -31,8 +31,9 @@ app.use("/api/application", applicationRoutes);
 app.use("/api/job", jobRoutes);
 
 
-app.get('/',(req,res)=>{
-    res.send('Backend is running');
+
+app.get("/", (req, res) => {
+  res.send("Job Portal Backend is Running 🚀");
 });
 
 const PORT = process.env.PORT || 5000;
