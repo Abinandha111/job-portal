@@ -18,7 +18,7 @@ export default function Jobs() {
     try {
 
       const res = await axios.get(
-        `${API}/api/jobs`
+        `${API}/api/job`
       );
 
       setJobs(res.data);
