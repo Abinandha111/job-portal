@@ -197,22 +197,23 @@ export default function Profile() {
           </div>
 
            <div className="stats">
-          <div>
-            <h4>Applied</h4>
-            <p>12</p>
-          </div>
 
-          <div>
-            <h4>Saved</h4>
-            <p>5</p>
-          </div>
+  <div className="stat-box">
+    <h4>Applied Jobs</h4>
+    <p>{user.appliedJobs?.length || 0}</p>
+  </div>
 
-          <div>
-            <h4>Status</h4>
-            <p>Active</p>
-          </div>
-        </div>
+  <div className="stat-box">
+    <h4>Saved Jobs</h4>
+    <p>{user.savedJobs?.length || 0}</p>
+  </div>
 
+  <div className="stat-box">
+    <h4>Status</h4>
+    <p>Active</p>
+  </div>
+
+</div>
           {/* EDIT */}
           <button className="edit-btn" onClick={openEdit}>
             Edit Profile

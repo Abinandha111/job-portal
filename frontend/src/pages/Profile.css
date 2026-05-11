@@ -158,21 +158,41 @@
   border: 1px solid #444;
 }
 
-.stats h4 {
-  margin: 0;
+.stats {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.stat-box {
+  flex: 1;
+  background: #f3f6f8;
+  padding: 12px;
+  border-radius: 10px;
+  text-align: center;
+  transition: 0.3s;
+}
+
+.stat-box:hover {
+  transform: translateY(-2px);
+}
+
+.stat-box h4 {
   font-size: 12px;
   color: gray;
+  margin: 0;
 }
 
-.stats p {
-  margin: 5px 0 0;
+.stat-box p {
+  font-size: 18px;
   font-weight: bold;
+  margin-top: 5px;
 }
 
-.dark .stats {
+.dark .stat-box {
   background: #2a2a2a;
 }
-
 
 /* EDIT BUTTON (LinkedIn blue style) */
 .edit-btn {
