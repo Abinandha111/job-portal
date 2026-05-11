@@ -85,3 +85,16 @@
 .add-job-btn:hover {
   background: #357bd8;
 }
+
+.applied-jobs-btn {
+  background: #28a745;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.3s;
+  display: inline-block;
+  margin-left: 10px;
+}
