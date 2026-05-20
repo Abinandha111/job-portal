@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import API from "./data/api";
+import "./AppliedJob.css";
 
 export default function AppliedJobs() {
 

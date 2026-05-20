@@ -1,14 +1,12 @@
 import "./Jobs.css";
 import axios from "axios";
-import { useEffect } from "react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import API from "./data/api";
 
-
 export default function Jobs() {
-
-    const [search, setSearch] = useState("");
+    const location = useLocation();
+    const [search, setSearch] = useState(location.state?.initialSearch || "");
     const [jobs, setJobs] = useState([]);
 
     useEffect(() => {
@@ -112,46 +110,71 @@ const handleEdit = async (job) => {
 
   return (
     <div className="jobs-page">
-
-      <h1 className="title">Available Jobs</h1>
-      <Link to="/add-job">
-        <button className="add-job-btn"> + Add Job</button>
-      </Link>
-      <Link to="/applied-jobs">
-        <button className="applied-jobs-btn">My Applied Jobs</button>
-      </Link>
+      <div className="jobs-header">
+        <div className="header-text">
+          <h1 className="title">Available Positions</h1>
+          <p className="subtitle">Discover jobs aligned with your expertise and aspirations</p>
+        </div>
+        <div className="header-actions-bar">
+          <Link to="/add-job">
+            <button className="add-job-btn"><span>+</span> Post a Job</button>
+          </Link>
+          <Link to="/applied-jobs">
+            <button className="applied-jobs-btn">My Applications</button>
+          </Link>
+        </div>
+      </div>
 
       <div className="search-box">
-        <input
-          type="text"
-          placeholder="Search jobs by title, company, location..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+        <div className="search-bar-inner">
+          <span className="search-icon">🔍</span>
+          <input
+            type="text"
+            placeholder="Search positions by title, company name, location..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
       </div>
 
       <div className="jobs-container">
-
         {filteredJobs.length > 0 ? (
-        filteredJobs.map((job) => (
-        <div className="job-card" key={job._id}>
-            <h2>{job.title}</h2>
-            <p><b>Company:</b> {job.company}</p>
-            <p><b>Location:</b> {job.location}</p>
-            <p><b>Salary:</b> {job.salary}</p>
-            <button onClick={() => handleApply(job._id)}>Apply Now</button>
-            <button onClick={() => handleDelete(job._id)}>Delete Job</button>
-            <button onClick={() => handleEdit(job)}>Edit Job</button>
-        </div>
-        ))
-    ) : (
-        <p>No jobs found 😢</p>
-  )}
-
-  
-
-</div>
-
+          filteredJobs.map((job) => (
+            <div className="job-card" key={job._id}>
+              <div className="card-accent-line"></div>
+              <div className="job-card-header">
+                <h2>{job.title}</h2>
+                <span className="company-badge">{job.company}</span>
+              </div>
+              <div className="job-card-details">
+                <div className="detail-item">
+                  <span className="detail-icon">📍</span>
+                  <span className="detail-text">{job.location}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="detail-icon">💰</span>
+                  <span className="detail-text">{job.salary || "Not Specified"}</span>
+                </div>
+                {job.description && (
+                  <p className="job-description-preview">{job.description}</p>
+                )}
+              </div>
+              
+              <div className="job-card-actions">
+                <button className="apply-btn" onClick={() => handleApply(job._id)}>Apply Now</button>
+                <div className="admin-actions">
+                  <button className="edit-btn-job" onClick={() => handleEdit(job)} title="Edit Title">✏️</button>
+                  <button className="delete-btn-job" onClick={() => handleDelete(job._id)} title="Delete Job">🗑️</button>
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="no-results">
+            <p>No jobs matching "{search}" found 😢</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
