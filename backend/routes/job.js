@@ -3,9 +3,10 @@ const router = express.Router();
 
 const Job = require("../models/job");
 
+const authMiddleware = require("../middleware/authMiddleware");
 
 // ADD JOB
-router.post("/add", async (req, res) => {
+router.post("/add", authMiddleware, async (req, res) => {
   try {
 
     const { title, company, location, salary, description } = req.body;
@@ -49,7 +50,7 @@ router.get("/", async (req, res) => {
 });
 
 // DELETE JOB
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authMiddleware, async (req, res) => {
   try {
 
     await Job.findByIdAndDelete(req.params.id);
@@ -68,7 +69,7 @@ router.delete("/:id", async (req, res) => {
 });
 
 // UPDATE JOB
-router.put("/:id", async (req, res) => {
+router.put("/:id", authMiddleware, async (req, res) => {
   try {
 
     const updatedJob = await Job.findByIdAndUpdate(

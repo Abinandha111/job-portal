@@ -26,6 +26,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/upload", express.static(path.join(__dirname, "upload")));
 app.use("/api/user", userRoutes);
+
 app.use("/api/application", applicationRoutes);
 
 app.use("/api/job", jobRoutes);

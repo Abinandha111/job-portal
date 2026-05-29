@@ -31,6 +31,25 @@ bio: {
 skills: {
   type: String,
   default: ""
+},
+savedJobs: [
+  {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Job"
+  }
+],
+
+appliedJobs: [
+  {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Job"
+  }
+],
+
+role: {
+  type: String,
+  enum: ["user", "admin"],
+  default: "user"
 }
 });
 

@@ -8,6 +8,7 @@ export default function Jobs() {
     const location = useLocation();
     const [search, setSearch] = useState(location.state?.initialSearch || "");
     const [jobs, setJobs] = useState([]);
+    const [savedJobs, setSavedJobs] = useState([]);
 
     useEffect(() => {
 
@@ -15,15 +16,25 @@ export default function Jobs() {
 
     try {
 
+      const token = localStorage.getItem("token");
+
+      
+
       const res = await axios.get(
         `${API}/api/job`
       );
 
       setJobs(res.data);
 
+
+      
+
     } catch (error) {
+
       console.log(error);
+
     }
+
   };
 
   fetchJobs();
@@ -35,6 +46,9 @@ export default function Jobs() {
     job.company.toLowerCase().includes(search.toLowerCase()) ||
     job.location.toLowerCase().includes(search.toLowerCase())
   );
+
+  
+   
 
   const handleApply = async (jobId) => {
   try {
@@ -165,6 +179,10 @@ const handleEdit = async (job) => {
                 <div className="admin-actions">
                   <button className="edit-btn-job" onClick={() => handleEdit(job)} title="Edit Title">✏️</button>
                   <button className="delete-btn-job" onClick={() => handleDelete(job._id)} title="Delete Job">🗑️</button>
+                  <button className="save-btn" onClick={() => handleSave(job._id)}>
+                     {savedJobs.includes(job._id)
+                        ? "Saved ❤️"
+                        : "Save 🤍"} </button>
                 </div>
               </div>
             </div>
