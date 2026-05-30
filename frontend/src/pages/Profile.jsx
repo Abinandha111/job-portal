@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import "./Profile.css";
 import API from "./data/api";
+import { Link } from "react-router-dom";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -197,16 +198,19 @@ export default function Profile() {
           </div>
 
            <div className="stats">
-
+<Link to="/applied-jobs" className="stat-link">
   <div className="stat-box">
     <h4>Applied Jobs</h4>
-    <p>{user.appliedJobs?.length || 0}</p>
+    <p>{user.appliedCount || 0}</p>
   </div>
+</Link>
 
+<Link to="/saved-job" className="stat-link">
   <div className="stat-box">
     <h4>Saved Jobs</h4>
     <p>{user.savedJobs?.length || 0}</p>
   </div>
+</Link>
 
   <div className="stat-box">
     <h4>Status</h4>

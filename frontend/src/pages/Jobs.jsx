@@ -5,122 +5,154 @@ import { Link, useLocation } from "react-router-dom";
 import API from "./data/api";
 
 export default function Jobs() {
-    const location = useLocation();
-    const [search, setSearch] = useState(location.state?.initialSearch || "");
-    const [jobs, setJobs] = useState([]);
-    const [savedJobs, setSavedJobs] = useState([]);
+  const location = useLocation();
+  const [search, setSearch] = useState(location.state?.initialSearch || "");
+  const [jobs, setJobs] = useState([]);
+  const [savedJobs, setSavedJobs] = useState([]);
 
-    useEffect(() => {
+  useEffect(() => {
 
-  const fetchJobs = async () => {
+    const fetchJobs = async () => {
 
-    try {
+      try {
 
-      const token = localStorage.getItem("token");
-
-      
-
-      const res = await axios.get(
-        `${API}/api/job`
-      );
-
-      setJobs(res.data);
+        const token = localStorage.getItem("token");
 
 
-      
 
-    } catch (error) {
+        const res = await axios.get(
+          `${API}/api/job`
+        );
 
-      console.log(error);
+        setJobs(res.data);
 
-    }
 
-  };
 
-  fetchJobs();
 
-}, []);
+      } catch (error) {
 
-     const filteredJobs = jobs.filter((job) =>
+        console.log(error);
+
+      }
+
+    };
+
+    fetchJobs();
+
+  }, []);
+
+  const filteredJobs = jobs.filter((job) =>
     job.title.toLowerCase().includes(search.toLowerCase()) ||
     job.company.toLowerCase().includes(search.toLowerCase()) ||
     job.location.toLowerCase().includes(search.toLowerCase())
   );
 
-  
-   
+
+
 
   const handleApply = async (jobId) => {
-  try {
+    try {
 
-    const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token");
 
-    const res = await axios.post(
-      `${API}/api/application/apply`,
-      { jobId },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
+      const res = await axios.post(
+        `${API}/api/application/apply`,
+        { jobId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         }
+      );
+
+      alert("Applied successfully ✅");
+
+    } catch (error) {
+      console.log(error);
+      alert("Already applied or error ❌");
+    }
+  };
+
+  const handleDelete = async (id) => {
+
+    try {
+
+      await axios.delete(`${API}/api/job/${id}`);
+
+      alert("Job deleted successfully ✅");
+
+      setJobs(jobs.filter((job) => job._id !== id));
+
+    } catch (error) {
+
+      console.log(error);
+      alert("Delete failed ❌");
+
+    }
+  };
+
+  const handleEdit = async (job) => {
+
+    const newTitle = prompt("Enter new title", job.title);
+
+    if (!newTitle) return;
+
+    try {
+
+      await axios.put(`${API}/api/job/${job._id}`, {
+        ...job,
+        title: newTitle
+      });
+
+      alert("Job updated successfully ✅");
+
+      setJobs(
+        jobs.map((j) =>
+          j._id === job._id
+            ? { ...j, title: newTitle }
+            : j
+        )
+      );
+
+    } catch (error) {
+
+      console.log(error);
+      alert("Update failed ❌");
+
+    }
+  };
+
+  const handleSave = async (jobId) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      console.log("TOKEN:", token);
+      if (!token) {
+        alert("Please login first");
+        return;
       }
-    );
 
-    alert("Applied successfully ✅");
+      const res = await axios.put(
+        `${API}/api/user/saved-jobs/${jobId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
 
-  } catch (error) {
-    console.log(error);
-    alert("Already applied or error ❌");
-  }
-};
+      console.log("SAVE RESPONSE", res.data);
 
-const handleDelete = async (id) => {
+      alert(res.data.message);
+      setSavedJobs((prev) => [...prev, jobId]);
 
-  try {
 
-    await axios.delete(`${API}/api/job/${id}`);
-
-    alert("Job deleted successfully ✅");
-
-    setJobs(jobs.filter((job) => job._id !== id));
-
-  } catch (error) {
-
-    console.log(error);
-    alert("Delete failed ❌");
-
-  }
-};
-
-const handleEdit = async (job) => {
-
-  const newTitle = prompt("Enter new title", job.title);
-
-  if (!newTitle) return;
-
-  try {
-
-    await axios.put(`${API}/api/job/${job._id}`, {
-      ...job,
-      title: newTitle
-    });
-
-    alert("Job updated successfully ✅");
-
-    setJobs(
-      jobs.map((j) =>
-        j._id === job._id
-          ? { ...j, title: newTitle }
-          : j
-      )
-    );
-
-  } catch (error) {
-
-    console.log(error);
-    alert("Update failed ❌");
-
-  }
-};
+    } catch (error) {
+      console.log(error);
+      alert(error.response?.data?.message || "Error saving job");
+    }
+  };
 
   return (
     <div className="jobs-page">
@@ -173,16 +205,14 @@ const handleEdit = async (job) => {
                   <p className="job-description-preview">{job.description}</p>
                 )}
               </div>
-              
+
               <div className="job-card-actions">
                 <button className="apply-btn" onClick={() => handleApply(job._id)}>Apply Now</button>
                 <div className="admin-actions">
                   <button className="edit-btn-job" onClick={() => handleEdit(job)} title="Edit Title">✏️</button>
                   <button className="delete-btn-job" onClick={() => handleDelete(job._id)} title="Delete Job">🗑️</button>
-                  <button className="save-btn" onClick={() => handleSave(job._id)}>
-                     {savedJobs.includes(job._id)
-                        ? "Saved ❤️"
-                        : "Save 🤍"} </button>
+                  <button className="save-btn" onClick={() => handleSave(job._id)}>Save 🤍</button>
+
                 </div>
               </div>
             </div>

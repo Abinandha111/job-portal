@@ -27,7 +27,7 @@ export default function Navbar() {
 
       <div className="navbar-links">
         <Link to="/" className={location.pathname === "/" ? "active" : ""}>Home</Link>
-        
+
         {isLoggedIn ? (
           <>
             <Link to="/jobs" className={location.pathname === "/jobs" ? "active" : ""}>Explore Jobs</Link>
@@ -38,11 +38,13 @@ export default function Navbar() {
             <button onClick={handleLogout} className="logout-btn-nav">
               Logout
             </button>
+            <Link to="/saved-jobs" className={location.pathname === "/saved-jobs" ? "active" : ""}>Saved Jobs </Link>
           </>
         ) : (
           <>
             <Link to="/login" className={location.pathname === "/login" ? "active" : ""}>Login</Link>
             <Link to="/register" className="register-btn-nav">Register</Link>
+
           </>
         )}
       </div>

@@ -230,9 +230,15 @@
   transition: var(--transition-smooth);
 }
 
+
+
 .stat-box:hover {
   transform: translateY(-2px);
   border-color: var(--accent-primary-glow);
+}
+.stat-link{
+  text-decoration:none;
+  color:inherit;
 }
 
 .stat-box h4 {
@@ -424,4 +430,4 @@
     width: 100px;
     height: 100px;
   }
-}
+}
