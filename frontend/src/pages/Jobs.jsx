@@ -9,6 +9,9 @@ export default function Jobs() {
   const [search, setSearch] = useState(location.state?.initialSearch || "");
   const [jobs, setJobs] = useState([]);
   const [savedJobs, setSavedJobs] = useState([]);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
 
@@ -156,18 +159,28 @@ export default function Jobs() {
 
   return (
     <div className="jobs-page">
+      <button className="menu-btn" onClick={() => setMenuOpen(!menuOpen)}>
+        ☰
+      </button>
+      {menuOpen && (
+  <div className="sidebar-menu">
+    <Link to="/profile">👤 Profile</Link>
+    <Link to="/applied-jobs">📄 Applied Jobs</Link>
+    <Link to="/saved-jobs">❤️ Saved Jobs</Link>
+  </div>
+)}
       <div className="jobs-header">
         <div className="header-text">
           <h1 className="title">Available Positions</h1>
           <p className="subtitle">Discover jobs aligned with your expertise and aspirations</p>
         </div>
         <div className="header-actions-bar">
+          {user?.role === "recruiter" && (
           <Link to="/add-job">
             <button className="add-job-btn"><span>+</span> Post a Job</button>
           </Link>
-          <Link to="/applied-jobs">
-            <button className="applied-jobs-btn">My Applications</button>
-          </Link>
+          )}
+          
         </div>
       </div>
 
@@ -207,12 +220,19 @@ export default function Jobs() {
               </div>
 
               <div className="job-card-actions">
-                <button className="apply-btn" onClick={() => handleApply(job._id)}>Apply Now</button>
+                {user?.role === "user" && (
+                  <button className="apply-btn" onClick={() => handleApply(job._id)}>Apply Now</button>
+                )}
                 <div className="admin-actions">
+                  {user?.role === "recruiter" && (
+                    <>
                   <button className="edit-btn-job" onClick={() => handleEdit(job)} title="Edit Title">✏️</button>
                   <button className="delete-btn-job" onClick={() => handleDelete(job._id)} title="Delete Job">🗑️</button>
-                  <button className="save-btn" onClick={() => handleSave(job._id)}>Save 🤍</button>
+                  </> )}
 
+                  {user.role == "user" && (
+                    <button className="save-btn" onClick={() => handleSave(job._id)}>Save 🤍</button>
+                  )}
                 </div>
               </div>
             </div>

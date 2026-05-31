@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import "./Profile.css";
 import API from "./data/api";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -139,6 +139,31 @@ export default function Profile() {
   }
 };
 
+const token = localStorage.getItem("token");
+const navigate = useNavigate();
+
+const deleteAccount = async () => {
+  const confirmDelete = window.confirm("Are you sure you want to delete your account?");
+  if (!confirmDelete) return;
+
+  try {
+    await axios.delete(`${API}/api/user/delete-account`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    localStorage.clear();
+    alert("Account deleted successfully");
+
+    
+
+    navigate("/register"); // redirect
+  } catch (err) {
+    console.log(err);
+  }
+};
+
   if (loading) return <h2>Loading...</h2>;
   if (!user) return <h2>No user data found</h2>;
 
@@ -166,7 +191,7 @@ export default function Profile() {
               src={
                 user.image
                   ? `${API}/upload/${user.image}`
-                  : "https://via.placeholder.com/100"
+                  : "https://ui-avatars.com/api/?name=User&background=random"
               }
               className="profile-img"
             />
@@ -288,6 +313,8 @@ export default function Profile() {
               {uploading ? "Uploading..." : "Upload"}
             </button>
           </div>
+
+          <button className="delete-account-btn" onClick={deleteAccount}>🗑️ Delete Account</button>
 
         </div>
       </div>

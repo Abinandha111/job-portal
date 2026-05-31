@@ -12,6 +12,7 @@ export default function Register() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [role, setRole] = useState("user");
 
     const navigate = useNavigate();
 
@@ -34,7 +35,8 @@ export default function Register() {
         const res = await axios.post(`${API}/api/auth/register`, {
             username,
             email,
-            password
+            password,
+            role
         });
 
         console.log(res.data);
@@ -64,6 +66,13 @@ export default function Register() {
 
                     <input type="password" placeholder="Password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
                     <input type="password" placeholder="Confirm Password" autoComplete="new-password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+
+                    
+
+                    <select onChange={(e) => setRole(e.target.value)}>
+                        <option value="user">Job Seeker</option>
+                        <option value="recruiter">Recruiter</option>
+                    </select>
 
                     <button type="submit">Register</button>
                 </form>

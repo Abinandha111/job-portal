@@ -47,10 +47,10 @@ appliedJobs: [
 ],
 
 role: {
-  type: String,
-  enum: ["user", "admin"],
-  default: "user"
-}
+    type: String,
+    enum: ["user", "recruiter", "admin"],
+    default: "user"
+  },
 });
 
 module.exports = mongoose.model("User", userSchema);

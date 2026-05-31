@@ -16,7 +16,8 @@ router.post("/add", authMiddleware, async (req, res) => {
       company,
       location,
       salary,
-      description
+      description,
+      createdBy: req.user.userId
     });
 
     await newJob.save();
@@ -35,10 +36,10 @@ router.post("/add", authMiddleware, async (req, res) => {
 
 
 // GET ALL JOBS
-router.get("/", async (req, res) => {
+router.get("/my-jobs", authMiddleware, async (req, res) => {
   try {
 
-    const jobs = await Job.find();
+    const jobs = await Job.find({ createdBy: req.user.userId });
 
     res.json(jobs);
 
@@ -46,6 +47,16 @@ router.get("/", async (req, res) => {
     res.status(500).json({
       error: error.message
     });
+  }
+});
+
+// GET ALL JOBS (PUBLIC - Jobs page)
+router.get("/", async (req, res) => {
+  try {
+    const jobs = await Job.find();
+    res.json(jobs);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 

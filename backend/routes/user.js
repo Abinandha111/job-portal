@@ -5,6 +5,8 @@ const upload = require("../middleware/upload");
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const Application = require("../models/application");
+const roleCheck  = require("../middleware/roleCheck");
+
 
 router.get("/profile", authMiddleware, async (req, res) => {
   try {
@@ -44,6 +46,36 @@ router.post(
       res.status(500).json({ message: "Upload failed" });
     }
   }
+);
+
+const applyJob = async (req, res) => {
+  try {
+    const { jobId } = req.params;
+
+    const resume = req.file ? req.file.filename : null;
+
+    const application = new Application({
+      jobId,
+      userId: req.user.userId,
+      resume,
+    });
+
+    await application.save();
+
+    res.json({ message: "Applied successfully" });
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Apply failed" });
+  }
+};
+
+router.post(
+  "/apply/:jobId",
+  authMiddleware,
+  roleCheck("user"),
+  upload.single("resume"),
+  applyJob
 );
 
 router.put("/update", authMiddleware, async (req, res) => {
@@ -117,5 +149,29 @@ router.get("/saved-jobs", authMiddleware, async (req, res) => {
     res.status(500).json({ message: "Error" });
   }
 });
+
+router.delete("/delete-account", authMiddleware, async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.user.userId);
+
+    res.json({ message: "Account deleted" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get("/applicants", authMiddleware, async (req, res) => {
+  try {
+    const applicants = await Application.find()
+      .populate("userId", "username email")
+      .populate("jobId", "title");
+
+    res.json(applicants);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching applicants" });
+  }
+});
+
+
 
 module.exports = router;

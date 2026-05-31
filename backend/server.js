@@ -16,6 +16,7 @@ const jobRoutes = require("./routes/job");
 
 
 
+
 const app=express();
 
 
@@ -30,6 +31,8 @@ app.use("/api/user", userRoutes);
 app.use("/api/application", applicationRoutes);
 
 app.use("/api/job", jobRoutes);
+
+
 
 
 

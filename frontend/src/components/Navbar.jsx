@@ -13,6 +13,7 @@ export default function Navbar() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
     setIsLoggedIn(false);
     navigate("/login");
   };
@@ -31,14 +32,14 @@ export default function Navbar() {
         {isLoggedIn ? (
           <>
             <Link to="/jobs" className={location.pathname === "/jobs" ? "active" : ""}>Explore Jobs</Link>
-            <Link to="/applied-jobs" className={location.pathname === "/applied-jobs" ? "active" : ""}>My Applications</Link>
-            <Link to="/profile" className="profile-btn-nav">
-              Profile
-            </Link>
+            
+            
             <button onClick={handleLogout} className="logout-btn-nav">
               Logout
             </button>
-            <Link to="/saved-jobs" className={location.pathname === "/saved-jobs" ? "active" : ""}>Saved Jobs </Link>
+            
+            
+            
           </>
         ) : (
           <>

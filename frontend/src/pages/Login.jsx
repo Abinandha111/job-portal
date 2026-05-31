@@ -23,15 +23,24 @@ export default function Login() {
 
         console.log(res.data);
         localStorage.setItem("token", res.data.token);
-
+        const user = res.data.user;
+        localStorage.setItem("user", JSON.stringify(res.data.user));
 
         
+        
+        
+       if (user.role === "recruiter") {
+  navigate("/recruiter/dashboard");
+} else {
+  navigate("/jobs");
+}
+  
 
-        navigate("/jobs");
-        } catch (error) {
-            console.log(error?.response?.data || error.message);
-            alert("Login failed ❌");
-        }
+      
+}catch (error) {
+  console.log(error.response?.data);
+  alert(error.response?.data?.error || "Login failed ❌");
+}
     };
     return (
 

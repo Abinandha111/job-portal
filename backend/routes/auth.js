@@ -24,7 +24,7 @@ const setOtpExpiry = (email, time = 5 * 60 * 1000) => {
 ========================= */
 router.post("/register", async (req, res) => {
   try {
-    let { username, email, password } = req.body;
+    let { username, email, password ,role } = req.body;
 
     email = cleanEmail(email);
 
@@ -42,6 +42,7 @@ router.post("/register", async (req, res) => {
       email,
       password,
       expiresAt: Date.now() + 5 * 60 * 1000,
+      role: role === "recruiter" ? "recruiter" : "user"
     };
 
     setOtpExpiry(email);
@@ -81,6 +82,7 @@ router.post("/verify-otp", async (req, res) => {
       username: data.username,
       email: data.email,
       password: hashedPassword,
+      role: data.role
     });
 
     await newUser.save();
@@ -204,7 +206,7 @@ router.post("/login", async (req, res) => {
     const token = jwt.sign(
       { userId: user._id },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "7d" }
     );
 
     res.json({
@@ -214,6 +216,7 @@ router.post("/login", async (req, res) => {
         id: user._id,
         username: user.username,
         email: user.email,
+        role: user.role,
       },
     });
 

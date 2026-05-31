@@ -1,0 +1,85 @@
+.dashboard {
+  display: flex;
+  height: 100vh;
+  font-family: Arial;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 220px;
+  background: #111827;
+  color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.sidebar a {
+  color: #ccc;
+  text-decoration: none;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.sidebar a:hover {
+  background: #1f2937;
+  color: white;
+}
+
+/* MAIN */
+.main {
+  flex: 1;
+  background: #2462dc;
+  padding: 20px;
+}
+
+/* TOPBAR */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* CARDS */
+.cards {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.card {
+  flex: 1;
+  background: rgb(22, 45, 192);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* JOB CARD */
+.job-section {
+  margin-top: 30px;
+}
+
+.job-card {
+  background: rgb(21, 25, 230);
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+}
+
+.actions button {
+  margin-left: 10px;
+  padding: 6px 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.delete {
+  background: red;
+  color: white;
+}

@@ -1,0 +1,54 @@
+/* Applicants.css */
+
+.applicants-container {
+  padding: 30px;
+  background: #f4f6f9;
+  min-height: 100vh;
+}
+
+.applicants-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #222;
+}
+
+.applicant-card {
+  background: #fff;
+  padding: 18px;
+  margin-bottom: 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: 0.2s ease;
+}
+
+.applicant-card:hover {
+  transform: translateY(-3px);
+}
+
+.applicant-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111;
+}
+
+.applicant-email {
+  color: #666;
+  margin-top: 4px;
+}
+
+.job-title {
+  margin-top: 8px;
+  font-weight: 500;
+  color: #333;
+}
+
+.badge {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 5px 10px;
+  background: #e8f0ff;
+  color: #2b6fff;
+  border-radius: 20px;
+  font-size: 12px;
+}
