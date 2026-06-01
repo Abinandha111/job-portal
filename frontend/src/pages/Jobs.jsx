@@ -1,7 +1,7 @@
 import "./Jobs.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation ,useNavigate} from "react-router-dom";
 import API from "./data/api";
 
 export default function Jobs() {
@@ -10,10 +10,16 @@ export default function Jobs() {
   const [jobs, setJobs] = useState([]);
   const [savedJobs, setSavedJobs] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [user, setUser] = useState(null);
 
-  const user = JSON.parse(localStorage.getItem("user"));
+const navigate = useNavigate();
 
   useEffect(() => {
+
+     const storedUser = localStorage.getItem("user");
+  if (storedUser) {
+    setUser(JSON.parse(storedUser));
+  }
 
     const fetchJobs = async () => {
 
@@ -157,6 +163,7 @@ export default function Jobs() {
     }
   };
 
+  console.log("USER DATA:", user);
   return (
     <div className="jobs-page">
       <button className="menu-btn" onClick={() => setMenuOpen(!menuOpen)}>
@@ -164,9 +171,23 @@ export default function Jobs() {
       </button>
       {menuOpen && (
   <div className="sidebar-menu">
-    <Link to="/profile">👤 Profile</Link>
-    <Link to="/applied-jobs">📄 Applied Jobs</Link>
-    <Link to="/saved-jobs">❤️ Saved Jobs</Link>
+
+    {user?.role === "user" && (
+      <>
+        <Link to="/profile">👤 Profile</Link>
+        <Link to="/applied-jobs">📄 Applied Jobs</Link>
+        <Link to="/saved-jobs">❤️ Saved Jobs</Link>
+      </>
+    )}
+
+    {user?.role === "recruiter" && (
+      <>
+        <Link to="/recruiter/dashboard">📊 Dashboard</Link>
+        <Link to="/applicants">👥 Applicants</Link>
+        <Link to="/add-job">➕ Add Job</Link>
+      </>
+    )}
+
   </div>
 )}
       <div className="jobs-header">
@@ -230,7 +251,7 @@ export default function Jobs() {
                   <button className="delete-btn-job" onClick={() => handleDelete(job._id)} title="Delete Job">🗑️</button>
                   </> )}
 
-                  {user.role == "user" && (
+                  {user?.role === "user" && (
                     <button className="save-btn" onClick={() => handleSave(job._id)}>Save 🤍</button>
                   )}
                 </div>

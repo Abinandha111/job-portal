@@ -23,6 +23,11 @@ const userSchema = new mongoose.Schema({
   default: ""
 },
 
+resume: {
+  type: String,
+  default: ""
+},
+
 bio: {
   type: String,
   default: ""
@@ -45,6 +50,8 @@ appliedJobs: [
     ref: "Job"
   }
 ],
+
+
 
 role: {
     type: String,

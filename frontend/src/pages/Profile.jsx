@@ -12,12 +12,15 @@ export default function Profile() {
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [resume, setResume] = useState(null);
 
   const [editMode, setEditMode] = useState(false);
   const [form, setForm] = useState({ username: "", email: "", password: "" });
   const [phone, setPhone] = useState("");
   const [bio, setBio] = useState("");
   const [skills, setSkills] = useState("");
+
+
 
   // FETCH USER
   useEffect(() => {
@@ -35,6 +38,7 @@ export default function Profile() {
         setPhone(res.data.phone || "");
         setBio(res.data.bio || "");
         setSkills(res.data.skills || "");
+        setResume(res.data.resume || "");
 
         setLoading(false);
       } catch (err) {
@@ -78,36 +82,105 @@ export default function Profile() {
 
   // UPLOAD IMAGE
   const uploadImage = async () => {
-    if (!image) return;
+  if (!image) {
+    alert("Please select an image");
+    return;
+  }
 
-    try {
-      setUploading(true);
+  try {
+    setUploading(true);
 
-      const formData = new FormData();
-      formData.append("image", image);
+    const formData = new FormData();
+    formData.append("image", image);
 
-      const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
-      const res = await axios.post(
-        `${API}/api/user/upload`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
+    const res = await axios.post(
+      `${API}/api/user/upload`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    setUser({
+      ...user,
+      image: res.data.image
+    });
+
+    setImage(null);
+    setPreview(null);
+
+    alert("Image uploaded successfully");
+
+  } catch (err) {
+    console.log(err);
+  } finally {
+    setUploading(false);
+  }
+};
+
+const uploadResume = async () => {
+  if (!resume) return;
+
+  try {
+    const formData = new FormData();
+
+    formData.append("resume", resume);
+
+    const token = localStorage.getItem("token");
+
+    const res =await axios.post(
+      `${API}/api/user/upload-resume`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
         }
-      );
+      }
+    );
 
-      setUser({ ...user, image: res.data.image });
-      setImage(null);
-      setPreview(null);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setUploading(false);
-    }
-  };
+    setUser({
+  ...user,
+  resume: res.data.resume
+});
+
+    alert("Resume uploaded successfully");
+
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const deleteResume = async () => {
+  try {
+
+    const token = localStorage.getItem("token");
+
+    await axios.delete(
+      `${API}/api/user/delete-resume`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
+    setUser({
+      ...user,
+      resume: ""
+    });
+
+    alert("Resume deleted successfully");
+
+  } catch (error) {
+    console.log(error);
+  }
+};
 
   const handleUpdate = async () => {
 
@@ -117,7 +190,8 @@ export default function Profile() {
 
     const res = await axios.put(
       `${API}/api/user/update`,
-      {
+      { 
+        ...form,
         phone,
         bio,
         skills
@@ -195,9 +269,46 @@ const deleteAccount = async () => {
               }
               className="profile-img"
             />
+            
+  
 
             <h2>{user.username}</h2>
             <p className="email">{user.email}</p>
+
+            {user.resume ? (
+    <a
+      href={`${API}/upload/${user.resume}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="resume-link"
+    >
+      📄 View Resume
+    </a>
+  ) : (
+    <p>No Resume Uploaded</p>
+  )}
+
+<h3>Resume Upload</h3>
+
+  <input
+    type="file"
+    accept=".pdf"
+    onChange={(e) => setResume(e.target.files[0])}
+  />
+
+  <button onClick={uploadResume}>
+    Upload Resume
+  </button>
+
+  {user.resume && (
+  <button
+    onClick={deleteResume}
+    className="delete-resume-btn"
+  >
+    Delete Resume
+  </button>
+)}
+
           
 
              <div className="bio-section">
@@ -273,6 +384,8 @@ const deleteAccount = async () => {
                 }
                 placeholder="Email"
               />
+
+              
               <input type="password" value={form.password} onChange={(e) => setForm({ 
             ...form, password: e.target.value 
           })}
@@ -284,7 +397,7 @@ const deleteAccount = async () => {
 
           <input value={skills} onChange={(e) => setSkills(e.target.value)} placeholder="Skills" />
 
-              <button onClick={updateProfile}>Save</button>
+              <button onClick={handleUpdate}>Save</button>
               <button onClick={() => setEditMode(false)}>Cancel</button>
             </div>
           )}

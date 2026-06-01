@@ -14,6 +14,11 @@ const jobRoutes = require("./routes/job");
 
 
 
+const recruiterRoute = require("./routes/recruiterRoute");
+
+
+
+
 
 
 
@@ -32,7 +37,7 @@ app.use("/api/application", applicationRoutes);
 
 app.use("/api/job", jobRoutes);
 
-
+app.use("/api/recruiter", recruiterRoute);
 
 
 

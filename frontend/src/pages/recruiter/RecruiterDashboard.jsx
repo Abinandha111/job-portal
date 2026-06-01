@@ -1,7 +1,44 @@
+import { useEffect, useState } from "react";
 import "./RecruiterDashboard.css";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import API from "../data/api";
+
+
+
 
 export default function RecruiterDashboard() {
+
+  const [stats, setStats] = useState({
+    totalJobs: 0,
+    totalApplicants: 0
+  });
+
+  // ✅ FUNCTION (INSIDE SAME COMPONENT)
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const res = await axios.get(
+          `${API}/api/user/recruiter/stats`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+
+        setStats(res.data);
+
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
   return (
     <div className="dashboard">
 
@@ -13,7 +50,7 @@ export default function RecruiterDashboard() {
         <Link to="/recruiter/my-jobs">💼 My Jobs</Link>
         <Link to="/recruiter/add-job">➕ Post Job</Link>
         <Link to="/recruiter/applicants">📥 Applications</Link>
-        
+        <Link to="/recruiter/profile">👤 Profile</Link>
       </div>
 
       {/* MAIN */}
@@ -27,34 +64,20 @@ export default function RecruiterDashboard() {
 
         {/* STATS */}
         <div className="cards">
+
           <div className="card">
             <h4>Total Jobs</h4>
-            <p>12</p>
+            <p>{stats.totalJobs}</p>
           </div>
 
           <div className="card">
             <h4>Applications</h4>
-            <p>48</p>
+            <p>{stats.totalApplicants}</p>
           </div>
 
           <div className="card">
             <h4>Active Jobs</h4>
-            <p>5</p>
-          </div>
-        </div>
-
-        {/* JOB LIST */}
-        <div className="job-section">
-          <h3>Your Jobs</h3>
-
-          <div className="job-card">
-            <h4>Frontend Developer</h4>
-            <p>React | Remote</p>
-
-            <div className="actions">
-              <button>Edit</button>
-              <button className="delete">Delete</button>
-            </div>
+            <p>{stats.totalJobs}</p>
           </div>
 
         </div>
@@ -62,4 +85,5 @@ export default function RecruiterDashboard() {
       </div>
     </div>
   );
+
 }

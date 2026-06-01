@@ -3,6 +3,7 @@ const router = express.Router();
 
 const authMiddleware = require("../middleware/authMiddleware");
 const Application = require("../models/application");
+const Job = require("../models/job");
 
 // APPLY FOR JOB
 router.post("/apply", authMiddleware, async (req, res) => {
@@ -21,6 +22,60 @@ router.post("/apply", authMiddleware, async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Application failed ❌" });
+  }
+});
+
+router.put("/status/:id", authMiddleware, async (req, res) => {
+  try {
+
+    const { status } = req.body;
+
+    const allowedStatus = ["pending", "shortlisted", "rejected"];
+
+    if (!allowedStatus.includes(status)) {
+      return res.status(400).json({ message: "Invalid status" });
+    }
+
+    const application = await Application.findById(req.params.id).populate("jobId");
+
+    if (!application) {
+      return res.status(404).json({ message: "Not found" });
+    }
+
+    if (application.jobId.createdBy.toString() !== req.user.userId) {
+      return res.status(403).json({ message: "Not allowed" });
+    }
+
+    application.status = status;
+    await application.save();
+
+    res.json({
+      message: "Status updated successfully",
+      application
+    });
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.get("/recruiter/applicants", authMiddleware, async (req, res) => {
+  try {
+    const jobs = await Job.find({ createdBy: req.user.userId });
+
+    const jobIds = jobs.map(job => job._id);
+
+    const applicants = await Application.find({
+      jobId: { $in: jobIds }
+    })
+    .populate("userId", "name email phone skills resume")
+    .populate("jobId", "title company");
+
+    res.json(applicants);
+
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching applicants" });
   }
 });
 

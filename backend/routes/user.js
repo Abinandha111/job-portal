@@ -7,6 +7,10 @@ const bcrypt = require("bcryptjs");
 const Application = require("../models/application");
 const roleCheck  = require("../middleware/roleCheck");
 
+const resume = require("../middleware/resume");
+
+const Job = require("../models/job");
+
 
 router.get("/profile", authMiddleware, async (req, res) => {
   try {
@@ -48,6 +52,57 @@ router.post(
   }
 );
 
+router.post(
+  "/upload-resume",
+  authMiddleware,
+  resume.single("resume"),
+  async (req, res) => {
+    try {
+
+      const user = await User.findByIdAndUpdate(
+        req.user.userId,
+        {
+          resume: req.file.filename
+        },
+        { new: true }
+      );
+
+      res.json({
+        message: "Resume uploaded successfully",
+        resume: user.resume
+      });
+
+    } catch (error) {
+
+      res.status(500).json({
+        error: error.message
+      });
+
+    }
+  }
+);
+
+router.delete("/delete-resume", authMiddleware, async (req, res) => {
+  try {
+
+    await User.findByIdAndUpdate(
+      req.user.userId,
+      {
+        resume: ""
+      }
+    );
+
+    res.json({
+      message: "Resume deleted successfully"
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Delete failed"
+    });
+  }
+});
+
 const applyJob = async (req, res) => {
   try {
     const { jobId } = req.params;
@@ -74,17 +129,20 @@ router.post(
   "/apply/:jobId",
   authMiddleware,
   roleCheck("user"),
-  upload.single("resume"),
+  resume.single("resume"),
   applyJob
 );
 
 router.put("/update", authMiddleware, async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password , phone, skills, bio} = req.body;
 
     const updateData = {
       username,
       email,
+      phone,
+      skills,
+      bio
     };
 
     // PASSWORD UPDATE
@@ -107,6 +165,8 @@ router.put("/update", authMiddleware, async (req, res) => {
     res.status(500).json({ message: "Update failed" });
   }
 });
+
+
 
 router.put("/saved-jobs/:jobId", authMiddleware, async (req, res) => {
   console.log("PARAMS:", req.params);
@@ -160,17 +220,7 @@ router.delete("/delete-account", authMiddleware, async (req, res) => {
   }
 });
 
-router.get("/applicants", authMiddleware, async (req, res) => {
-  try {
-    const applicants = await Application.find()
-      .populate("userId", "username email")
-      .populate("jobId", "title");
 
-    res.json(applicants);
-  } catch (err) {
-    res.status(500).json({ message: "Error fetching applicants" });
-  }
-});
 
 
 

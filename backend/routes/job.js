@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const Job = require("../models/job");
+const Application = require("../models/application");
 
 const authMiddleware = require("../middleware/authMiddleware");
 
@@ -44,6 +45,25 @@ router.get("/my-jobs", authMiddleware, async (req, res) => {
     res.json(jobs);
 
   } catch (error) {
+    res.status(500).json({
+      error: error.message
+    });
+  }
+});
+
+router.get("/applicants", authMiddleware, async (req, res) => {
+  try {
+    const jobs = await Job.find({ createdBy: req.user.userId });
+    const jobIds = jobs.map(job => job._id);
+
+
+    const applicants = await Application.find({ jobId: { $in: jobIds } })
+      .populate("userId")
+      .populate("jobId");
+      
+
+      res.json(applicants);
+  }catch (error) {
     res.status(500).json({
       error: error.message
     });

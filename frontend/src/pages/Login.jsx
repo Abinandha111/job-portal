@@ -22,6 +22,8 @@ export default function Login() {
         });
 
         console.log(res.data);
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
         localStorage.setItem("token", res.data.token);
         const user = res.data.user;
         localStorage.setItem("user", JSON.stringify(res.data.user));
