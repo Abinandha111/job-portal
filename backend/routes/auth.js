@@ -120,10 +120,10 @@ router.post("/forgot-password", async (req, res) => {
 
     await user.save();
 
+     await sendOTP(email, otp);
+
     // OPTIONAL: only if sendOTP exists safely
-    if (typeof sendOTP === "function") {
-      //await sendOTP(email, otp);
-    }
+    i
 
     res.json({ message: "OTP sent for password reset" });
 
