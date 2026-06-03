@@ -1,24 +1,28 @@
-const { Resend } = require("resend");
+const nodemailer = require("nodemailer");
 
-if (!process.env.RESEND_API_KEY) {
-  console.log("❌ RESEND_API_KEY missing");
+if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+  console.log("❌ EMAIL_USER or EMAIL_PASS missing");
 }
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
 
 const sendOTP = async (email, otp) => {
   try {
-
-    const response = await resend.emails.send({
-      from: "Job Portal <onboarding@resend.dev>",
+    const info = await transporter.sendMail({
+      from: `"Job Portal" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: "OTP Verification",
-      html: `<h2>Your OTP is: ${otp}</h2>`
+      html: `<h2>Your OTP is: ${otp}</h2>`,
     });
 
-    console.log("✅ OTP email sent:", response);
+    console.log("✅ OTP email sent:", info.messageId);
     return true;
-
   } catch (err) {
     console.log("❌ EMAIL FAILED:", err);
     return false;
