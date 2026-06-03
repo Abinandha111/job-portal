@@ -9,7 +9,7 @@ if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
 
 
 
-const nodemailer = require("nodemailer");
+
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
