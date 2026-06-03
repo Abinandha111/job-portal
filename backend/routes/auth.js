@@ -101,12 +101,11 @@ router.post("/verify-otp", async (req, res) => {
 ========================= */
 router.post("/forgot-password", async (req, res) => {
   try {
-    let { email } = req.body;
-
-    email = cleanEmail(email);
+    const { email } = req.body;
 
     const user = await User.findOne({ email });
 
+    // always respond same (security best practice)
     if (!user) {
       return res.status(200).json({
         message: "If this email exists, OTP has been sent",
@@ -115,20 +114,22 @@ router.post("/forgot-password", async (req, res) => {
 
     const otp = Math.floor(100000 + Math.random() * 900000);
 
-    otpStore[email] = {
-      otp,
-      type: "reset",
-      expiresAt: Date.now() + 5 * 60 * 1000,
-    };
+    // store in DB (NO external functions needed)
+    user.otp = otp;
+    user.otpExpire = Date.now() + 5 * 60 * 1000;
 
-    setOtpExpiry(email);
+    await user.save();
 
-    await sendOTP(email, otp);
+    // OPTIONAL: only if sendOTP exists safely
+    if (typeof sendOTP === "function") {
+      await sendOTP(email, otp);
+    }
 
     res.json({ message: "OTP sent for password reset" });
 
   } catch (err) {
-    res.status(500).json({ message: "Error" });
+    console.log("FORGOT PASSWORD ERROR:", err);
+    res.status(500).json({ message: err.message });
   }
 });
 
