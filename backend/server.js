@@ -12,7 +12,8 @@ const applicationRoutes = require("./routes/application");
 const jobRoutes = require("./routes/job");
 
 
-
+const dns = require("dns");
+dns.setDefaultResultOrder("ipv4first");
 
 const recruiterRoute = require("./routes/recruiterRoute");
 
