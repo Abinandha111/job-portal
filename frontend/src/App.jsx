@@ -107,6 +107,11 @@ const user = (() => {
           element={<RoleRoute role="recruiter"><Applicants /></RoleRoute>}
         />
 
+        <Route  
+          path="/recruiter/applicants/:jobId"  
+          element={<RoleRoute role="recruiter"><Applicants /></RoleRoute> }
+        />
+
         <Route path="/recruiter/profile" element={<RoleRoute role="recruiter"><RecruiterProfile /></RoleRoute>} />
       </Routes>
 

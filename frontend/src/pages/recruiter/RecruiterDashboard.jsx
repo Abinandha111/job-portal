@@ -11,7 +11,9 @@ export default function RecruiterDashboard() {
 
   const [stats, setStats] = useState({
     totalJobs: 0,
-    totalApplicants: 0
+    totalApplicants: 0,
+    activeJobs: 0,
+    closedJobs: 0
   });
 
   // ✅ FUNCTION (INSIDE SAME COMPONENT)
@@ -21,7 +23,7 @@ export default function RecruiterDashboard() {
         const token = localStorage.getItem("token");
 
         const res = await axios.get(
-          `${API}/api/user/recruiter/stats`,
+          `${API}/api/recruiter/stats`,
           {
             headers: {
               Authorization: `Bearer ${token}`
@@ -59,7 +61,7 @@ export default function RecruiterDashboard() {
         {/* TOP BAR */}
         <div className="topbar">
           <h3>Welcome Back 👋</h3>
-          <button className="logout">Logout</button>
+          
         </div>
 
         {/* STATS */}
@@ -76,9 +78,18 @@ export default function RecruiterDashboard() {
           </div>
 
           <div className="card">
-            <h4>Active Jobs</h4>
-            <p>{stats.totalJobs}</p>
-          </div>
+  <h4>Active Jobs</h4>
+  <p>{stats.activeJobs}</p>
+</div>
+
+<div className="card">
+  <h4>Closed Jobs</h4>
+  <p>{stats.closedJobs}</p>
+</div>
+
+          
+
+          
 
         </div>
 

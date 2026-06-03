@@ -33,7 +33,12 @@ const jobSchema = new mongoose.Schema({
   createdBy: {   // ✅ ADD THIS (VERY IMPORTANT)
     type: mongoose.Schema.Types.ObjectId,
     ref: "User"
-  }
+  },
+  status: {
+  type: String,
+  enum: ["active", "closed"],
+  default: "active"
+}
 });
 
 module.exports = mongoose.model("Job", jobSchema);

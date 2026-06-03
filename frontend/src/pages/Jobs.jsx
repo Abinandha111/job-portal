@@ -14,41 +14,54 @@ export default function Jobs() {
 
 const navigate = useNavigate();
 
-  useEffect(() => {
+useEffect(() => {
+  const storedUser = localStorage.getItem("user");
 
-     const storedUser = localStorage.getItem("user");
-  if (storedUser) {
+  if (storedUser && storedUser !== "undefined") {
     setUser(JSON.parse(storedUser));
+  } else {
+    setUser(null);
   }
+}, []);
 
-    const fetchJobs = async () => {
+useEffect(() => {
+  const fetchJobs = async () => {
+    try {
+      const res = await axios.get(`${API}/api/job`);
+      setJobs(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-      try {
+  fetchJobs();
+}, []);
 
-        const token = localStorage.getItem("token");
+  useEffect(() => {
+  const fetchSavedJobs = async () => {
+    try {
+      const token = localStorage.getItem("token");
 
+      if (!token) return;
 
+      const res = await axios.get(
+        `${API}/api/user/saved-jobs`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
 
-        const res = await axios.get(
-          `${API}/api/job`
-        );
+      setSavedJobs(res.data.map((job) => job._id));
 
-        setJobs(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-
-
-
-      } catch (error) {
-
-        console.log(error);
-
-      }
-
-    };
-
-    fetchJobs();
-
-  }, []);
+  fetchSavedJobs();
+}, []);
 
   const filteredJobs = jobs.filter((job) =>
     job.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -131,17 +144,31 @@ const navigate = useNavigate();
     }
   };
 
-  const handleSave = async (jobId) => {
-    try {
-      const token = localStorage.getItem("token");
+  const toggleSave = async (jobId) => {
+  try {
+    const token = localStorage.getItem("token");
 
-      console.log("TOKEN:", token);
-      if (!token) {
-        alert("Please login first");
-        return;
-      }
+    const isSaved = savedJobs.includes(jobId);
 
-      const res = await axios.put(
+    if (isSaved) {
+      // ❌ UNSAVE
+      await axios.put(
+        `${API}/api/user/unsave-job/${jobId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      setSavedJobs((prev) =>
+        prev.filter((id) => id !== jobId)
+      );
+
+    } else {
+      // ❤️ SAVE
+      await axios.put(
         `${API}/api/user/saved-jobs/${jobId}`,
         {},
         {
@@ -151,17 +178,14 @@ const navigate = useNavigate();
         }
       );
 
-      console.log("SAVE RESPONSE", res.data);
-
-      alert(res.data.message);
       setSavedJobs((prev) => [...prev, jobId]);
-
-
-    } catch (error) {
-      console.log(error);
-      alert(error.response?.data?.message || "Error saving job");
     }
-  };
+
+  } catch (err) {
+    console.log(err);
+    alert("Error in saving job");
+  }
+};
 
   console.log("USER DATA:", user);
   return (
@@ -242,8 +266,22 @@ const navigate = useNavigate();
 
               <div className="job-card-actions">
                 {user?.role === "user" && (
-                  <button className="apply-btn" onClick={() => handleApply(job._id)}>Apply Now</button>
-                )}
+  job.status === "active" ? (
+    <button
+      className="apply-btn"
+      onClick={() => handleApply(job._id)}
+    >
+      Apply Now
+    </button>
+  ) : (
+    <button
+      className="apply-btn"
+      disabled
+    >
+      Job Closed
+    </button>
+  )
+)}
                 <div className="admin-actions">
                   {user?.role === "recruiter" && (
                     <>
@@ -252,7 +290,12 @@ const navigate = useNavigate();
                   </> )}
 
                   {user?.role === "user" && (
-                    <button className="save-btn" onClick={() => handleSave(job._id)}>Save 🤍</button>
+                    <button
+  className="save-btn"
+  onClick={() => toggleSave(job._id)}
+>
+  {savedJobs.includes(job._id) ? "❤️ Saved" : "🤍 Save"}
+</button>
                   )}
                 </div>
               </div>

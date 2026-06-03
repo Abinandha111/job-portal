@@ -31,6 +31,33 @@ export default function SavedJob() {
         fetchSavedJobs();
     }, []);
 
+    const handleUnsave = async (jobId) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    await axios.put(
+      `${API}/api/user/unsave-job/${jobId}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
+    alert("Removed from saved jobs");
+
+    // UI update (remove instantly)
+    setSavedJobs((prev) =>
+      prev.filter((job) => job._id !== jobId)
+    );
+
+  } catch (err) {
+    console.log(err);
+    alert("Unsave failed");
+  }
+};
+
     return (
         <div className="applied-page">
             <h1 className="applied-title">My Saved Jobs ❤️</h1>
@@ -44,8 +71,19 @@ export default function SavedJob() {
       <p>{job.company || "No company"}</p>
       <p>{job.location || "No location"}</p>
       <p>{job.salary || "Not specified"}</p>
+
+      <button
+  className="unsave-btn"
+  onClick={() => handleUnsave(job._id)}
+>
+Delete
+</button>
     </div>
+
+    
   ))
+
+  
 ) : (
   <p>No saved jobs ❤️</p>
 )}

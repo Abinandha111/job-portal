@@ -3,12 +3,15 @@ import axios from "axios";
 import API from "../data/api";
 import "./MyJobs.css";
 
+import { useNavigate } from "react-router-dom";
+
 export default function MyJobs() {
 
   const [jobs, setJobs] = useState([]);
 
   const user = JSON.parse(localStorage.getItem("user"));
   const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
   useEffect(() => {
 
@@ -36,6 +39,25 @@ export default function MyJobs() {
     }
   };
 
+  const updateJobStatus = async (jobId, status) => {
+  try {
+    await axios.put(
+      `${API}/api/job/status/${jobId}`,
+      { status },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
+    fetchMyJobs();
+
+  } catch (err) {
+    console.log(err);
+  }
+};
+
   if (!user || user.role !== "recruiter") {
     return <h2>🚫 Only recruiters can access this page</h2>;
   }
@@ -56,6 +78,15 @@ export default function MyJobs() {
             <p><b>Location:</b> {job.location}</p>
             <p><b>Salary:</b> {job.salary}</p>
 
+            <p>
+  <b>Applicants:</b> {job.applicantsCount}
+</p>
+
+<p>
+  <b>Status:</b>{" "}
+  {job.status === "active" ? "🟢 Active" : "🔴 Closed"}
+</p>
+
             <div className="actions">
 
               <button className="edit-btn">
@@ -67,6 +98,24 @@ export default function MyJobs() {
               </button>
 
             </div>
+
+            {job.status === "active" ? (
+  <button
+    onClick={() => updateJobStatus(job._id, "closed")}
+  >
+    🔒 Close Job
+  </button>
+) : (
+  <button
+    onClick={() => updateJobStatus(job._id, "active")}
+  >
+    🔓 Reopen Job
+  </button>
+)}
+
+            <button  className="view-btn" onClick={() => navigate(`/recruiter/applicants/${job._id}`)}>
+              👥 View Applicants
+            </button>
 
           </div>
         ))

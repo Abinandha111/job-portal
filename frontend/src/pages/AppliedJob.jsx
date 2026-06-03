@@ -37,6 +37,32 @@ export default function AppliedJobs() {
 
   }, []);
 
+  const handleCancel = async (applicationId) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    await axios.delete(
+      `${API}/api/application/${applicationId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
+    alert("Application cancelled");
+
+    // UI update (remove from list)
+    setApplications((prev) =>
+      prev.filter((app) => app._id !== applicationId)
+    );
+
+  } catch (err) {
+    console.log(err);
+    alert("Cancel failed");
+  }
+};
+
   
 
     return (
@@ -69,6 +95,20 @@ export default function AppliedJobs() {
                 <b>Salary:</b> {app.jobId?.salary}
               </p>
 
+              <p>
+  <b>Status:</b>{" "}
+  {app.status === "pending" && "🟡 Pending"}
+  {app.status === "shortlisted" && "🟢 Shortlisted"}
+  {app.status === "rejected" && "🔴 Rejected"}
+</p>
+
+ <button
+  className="cancel-btn"
+  onClick={() => handleCancel(app._id)}
+>
+  ❌ Cancel Application
+</button>
+
             </div>
 
           ))
@@ -78,6 +118,8 @@ export default function AppliedJobs() {
           <p>No applied jobs found 😢</p>
 
         )}
+
+       
 
       </div>
 

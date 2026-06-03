@@ -99,4 +99,26 @@ router.get("/my-applications", authMiddleware, async (req, res) => {
   }
 });
 
+router.delete("/:id", authMiddleware, async (req, res) => {
+  try {
+    const application = await Application.findById(req.params.id);
+
+    if (!application) {
+      return res.status(404).json({ message: "Not found" });
+    }
+
+    if (application.userId.toString() !== req.user.userId) {
+      return res.status(403).json({ message: "Not allowed" });
+    }
+
+    await Application.findByIdAndDelete(req.params.id);
+
+    res.json({ message: "Deleted successfully" });
+
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 module.exports = router;

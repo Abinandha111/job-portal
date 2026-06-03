@@ -46,8 +46,8 @@ export default function RecruiterProfile() {
       alert("Profile updated successfully ✅");
 
       // update localStorage
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-      setUser(res.data.user);
+      localStorage.setItem("user", JSON.stringify(res.data));
+      setUser(res.data);
 
       setEditMode(false);
 

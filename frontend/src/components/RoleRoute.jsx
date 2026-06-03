@@ -1,7 +1,15 @@
 import { Navigate, useLocation } from "react-router-dom";
 
 export default function RoleRoute({ children, role }) {
-  const user = JSON.parse(localStorage.getItem("user"));
+  
+
+  let user = null;
+
+  try {
+    user = JSON.parse(localStorage.getItem("user") || "null");
+  } catch {
+    user = null;
+  }
   const location = useLocation();
 
   if (!user) {

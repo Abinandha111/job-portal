@@ -62,7 +62,7 @@ router.post(
       const user = await User.findByIdAndUpdate(
         req.user.userId,
         {
-          resume: req.file.filename
+          resume: `http://localhost:5000/upload/${req.file.filename}`
         },
         { new: true }
       );
@@ -206,6 +206,23 @@ router.get("/saved-jobs", authMiddleware, async (req, res) => {
     res.json(user.savedJobs);
 
   } catch (error) {
+    res.status(500).json({ message: "Error" });
+  }
+});
+
+router.put("/unsave-job/:jobId", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId);
+
+    user.savedJobs = user.savedJobs.filter(
+      (id) => id.toString() !== req.params.jobId
+    );
+
+    await user.save();
+
+    res.json({ message: "Job removed from saved list" });
+
+  } catch (err) {
     res.status(500).json({ message: "Error" });
   }
 });

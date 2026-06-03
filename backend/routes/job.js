@@ -40,9 +40,25 @@ router.post("/add", authMiddleware, async (req, res) => {
 router.get("/my-jobs", authMiddleware, async (req, res) => {
   try {
 
-    const jobs = await Job.find({ createdBy: req.user.userId });
+    const jobs = await Job.find({
+      createdBy: req.user.userId
+    });
 
-    res.json(jobs);
+    const jobsWithCount = await Promise.all(
+      jobs.map(async (job) => {
+
+        const applicantsCount = await Application.countDocuments({
+          jobId: job._id
+        });
+
+        return {
+          ...job.toObject(),
+          applicantsCount
+        };
+      })
+    );
+
+    res.json(jobsWithCount);
 
   } catch (error) {
     res.status(500).json({
@@ -50,7 +66,6 @@ router.get("/my-jobs", authMiddleware, async (req, res) => {
     });
   }
 });
-
 router.get("/applicants", authMiddleware, async (req, res) => {
   try {
     const jobs = await Job.find({ createdBy: req.user.userId });
@@ -77,6 +92,26 @@ router.get("/", async (req, res) => {
     res.json(jobs);
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+router.put("/status/:id", authMiddleware, async (req, res) => {
+  try {
+
+    const { status } = req.body;
+
+    const job = await Job.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true }
+    );
+
+    res.json(job);
+
+  } catch (error) {
+    res.status(500).json({
+      error: error.message
+    });
   }
 });
 

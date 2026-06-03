@@ -24,9 +24,22 @@ router.get("/stats", authMiddleware, async (req, res) => {
       jobId: { $in: jobIds }
     });
 
+    const activeJobs = await Job.countDocuments({
+  createdBy: recruiterId,
+  status: "active"
+});
+
+const closedJobs = await Job.countDocuments({
+  createdBy: recruiterId,
+  status: "closed"
+});
+
     res.json({
       totalJobs,
-      totalApplicants
+      totalApplicants,
+      activeJobs,
+      closedJobs
+
     });
 
   } catch (err) {
