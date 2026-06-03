@@ -122,15 +122,15 @@ router.post("/forgot-password", async (req, res) => {
 
     // OPTIONAL: only if sendOTP exists safely
     if (typeof sendOTP === "function") {
-      await sendOTP(email, otp);
+      //await sendOTP(email, otp);
     }
 
     res.json({ message: "OTP sent for password reset" });
 
   } catch (err) {
-    console.log("FORGOT PASSWORD ERROR:", err);
-    res.status(500).json({ message: err.message });
-  }
+  console.log("FORGOT PASSWORD ERROR:", err);
+  res.status(500).json({ message: err.message });
+}
 });
 
 /* =========================
