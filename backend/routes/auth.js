@@ -8,23 +8,12 @@ const sendOTP = require("../config/sendMail");
 
 const cleanEmail = (email) => email.trim().toLowerCase();
 
-let otpStore = {};
-
 /* =========================
-   AUTO CLEANUP HELPER
-========================= */
-const setOtpExpiry = (email, time = 5 * 60 * 1000) => {
-  setTimeout(() => {
-    delete otpStore[email];
-  }, time);
-};
-
-/* =========================
-   REGISTER
+   REGISTER (OTP)
 ========================= */
 router.post("/register", async (req, res) => {
   try {
-    let { username, email, password ,role } = req.body;
+    let { username, email, password, role } = req.body;
 
     email = cleanEmail(email);
 
@@ -35,23 +24,25 @@ router.post("/register", async (req, res) => {
 
     const otp = Math.floor(100000 + Math.random() * 900000);
 
-    otpStore[email] = {
-      otp,
-      type: "register",
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = new User({
       username,
       email,
-      password,
-      expiresAt: Date.now() + 5 * 60 * 1000,
-      role: role === "recruiter" ? "recruiter" : "user"
-    };
+      password: hashedPassword,
+      role: role === "recruiter" ? "recruiter" : "user",
+      otp,
+      otpExpire: Date.now() + 5 * 60 * 1000,
+    });
 
-    setOtpExpiry(email);
+    await user.save();
 
     await sendOTP(email, otp);
 
     res.json({ message: "OTP sent to email" });
 
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -65,29 +56,20 @@ router.post("/verify-otp", async (req, res) => {
 
     email = cleanEmail(email);
 
-    const data = otpStore[email];
+    const user = await User.findOne({ email });
 
     if (
-      !data ||
-      data.type !== "register" ||
-      data.otp != otp ||
-      Date.now() > data.expiresAt
+      !user ||
+      user.otp != otp ||
+      Date.now() > user.otpExpire
     ) {
       return res.status(400).json({ message: "Invalid OTP" });
     }
 
-    const hashedPassword = await bcrypt.hash(data.password, 10);
+    user.otp = null;
+    user.otpExpire = null;
 
-    const newUser = new User({
-      username: data.username,
-      email: data.email,
-      password: hashedPassword,
-      role: data.role
-    });
-
-    await newUser.save();
-
-    delete otpStore[email];
+    await user.save();
 
     res.json({ message: "User registered successfully" });
 
@@ -103,9 +85,8 @@ router.post("/forgot-password", async (req, res) => {
   try {
     const { email } = req.body;
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: cleanEmail(email) });
 
-    // always respond same (security best practice)
     if (!user) {
       return res.status(200).json({
         message: "If this email exists, OTP has been sent",
@@ -114,20 +95,19 @@ router.post("/forgot-password", async (req, res) => {
 
     const otp = Math.floor(100000 + Math.random() * 900000);
 
-    // store in DB (NO external functions needed)
     user.otp = otp;
     user.otpExpire = Date.now() + 5 * 60 * 1000;
 
     await user.save();
 
-     await sendOTP(email, otp);
+    await sendOTP(user.email, otp);
 
     res.json({ message: "OTP sent for password reset" });
 
   } catch (err) {
-  console.log("FORGOT PASSWORD ERROR:", err);
-  res.status(500).json({ message: err.message });
-}
+    console.log("FORGOT PASSWORD ERROR:", err);
+    res.status(500).json({ message: err.message });
+  }
 });
 
 /* =========================
@@ -139,13 +119,12 @@ router.post("/verify-reset-otp", async (req, res) => {
 
     email = cleanEmail(email);
 
-    const data = otpStore[email];
+    const user = await User.findOne({ email });
 
     if (
-      !data ||
-      data.type !== "reset" ||
-      data.otp != otp ||
-      Date.now() > data.expiresAt
+      !user ||
+      user.otp != otp ||
+      Date.now() > user.otpExpire
     ) {
       return res.status(400).json({ message: "Invalid OTP" });
     }
@@ -153,7 +132,7 @@ router.post("/verify-reset-otp", async (req, res) => {
     res.json({ message: "OTP verified" });
 
   } catch (err) {
-    res.status(500).json({ message: "Error" });
+    res.status(500).json({ message: "Error verifying OTP" });
   }
 });
 
@@ -170,15 +149,17 @@ router.post("/reset-password", async (req, res) => {
 
     await User.findOneAndUpdate(
       { email },
-      { password: hashed }
+      {
+        password: hashed,
+        otp: null,
+        otpExpire: null
+      }
     );
-
-    delete otpStore[email];
 
     res.json({ message: "Password reset successful" });
 
   } catch (err) {
-    res.status(500).json({ message: "Error" });
+    res.status(500).json({ message: "Error resetting password" });
   }
 });
 
@@ -192,11 +173,13 @@ router.post("/login", async (req, res) => {
     email = cleanEmail(email);
 
     const user = await User.findOne({ email });
+
     if (!user) {
       return res.status(400).json({ error: "Invalid email or password" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
+
     if (!isMatch) {
       return res.status(400).json({ error: "Invalid email or password" });
     }
@@ -227,8 +210,12 @@ router.post("/login", async (req, res) => {
    GET USERS
 ========================= */
 router.get("/users", async (req, res) => {
-  const users = await User.find();
-  res.json(users);
+  try {
+    const users = await User.find();
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 module.exports = router;
