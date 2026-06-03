@@ -16,3 +16,5 @@ const sendOTP = async (email, otp) => {
     console.log("❌ EMAIL FAILED FULL ERROR:", error);
   }
 };
+
+module.exports = sendOTP;
