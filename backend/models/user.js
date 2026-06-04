@@ -58,6 +58,15 @@ role: {
     enum: ["user", "recruiter", "admin"],
     default: "user"
   },
+  otp: {
+  type: Number,
+  default: null
+},
+
+otpExpire: {
+  type: Date,
+  default: null
+},
 });
 
 module.exports = mongoose.model("User", userSchema);
