@@ -8,7 +8,7 @@ const sendOTP = async (email, otp) => {
   try {
     const result = await brevo.transactionalEmails.sendTransacEmail({
       sender: {
-        name: "Job Portal",
+        name: "CareerHub",
         email: "careerhub300@gmail.com",
       },
       to: [
