@@ -1,48 +1,28 @@
-const nodemailer = require("nodemailer");
+const brevo = require("@getbrevo/brevo");
 
-console.log("EMAIL_USER exists:", !!process.env.EMAIL_USER);
-console.log("EMAIL_PASS exists:", !!process.env.EMAIL_PASS);
+const apiInstance = new brevo.TransactionalEmailsApi();
 
-if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-  console.log("❌ EMAIL_USER or EMAIL_PASS missing");
-}
-
-
-
-
-
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  family: 4,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
-transporter.verify(function (error, success) {
-  if (error) {
-    console.log("SMTP ERROR:", error);
-  } else {
-    console.log("SMTP READY");
-  }
-});
+apiInstance.setApiKey(
+  brevo.TransactionalEmailsApiApiKeys.apiKey,
+  process.env.BREVO_API_KEY
+);
 
 const sendOTP = async (email, otp) => {
   try {
-    const info = await transporter.sendMail({
-      from: `"Job Portal" <${process.env.EMAIL_USER}>`,
-      to: email,
+    await apiInstance.sendTransacEmail({
+      sender: {
+        email: "careerhub300@gmail.com",
+        name: "Career Hub"
+      },
+      to: [{ email }],
       subject: "OTP Verification",
-      html: `<h2>Your OTP is: ${otp}</h2>`,
+      htmlContent: `<h2>Your OTP is: ${otp}</h2>`
     });
 
-    console.log("✅ OTP email sent:", info.messageId);
+    console.log("✅ OTP email sent");
     return true;
   } catch (err) {
-    console.log("❌ EMAIL FAILED:", err);
+    console.error("❌ EMAIL FAILED:", err);
     return false;
   }
 };
