@@ -1,25 +1,26 @@
-const brevo = require("@getbrevo/brevo");
+const { BrevoClient } = require("@getbrevo/brevo");
 
-const apiInstance = new brevo.TransactionalEmailsApi();
-
-apiInstance.setApiKey(
-  brevo.TransactionalEmailsApiApiKeys.apiKey,
-  process.env.BREVO_API_KEY
-);
+const brevo = new BrevoClient({
+  apiKey: process.env.BREVO_API_KEY,
+});
 
 const sendOTP = async (email, otp) => {
   try {
-    await apiInstance.sendTransacEmail({
+    const result = await brevo.transactionalEmails.sendTransacEmail({
       sender: {
+        name: "Job Portal",
         email: "careerhub300@gmail.com",
-        name: "Career Hub"
       },
-      to: [{ email }],
+      to: [
+        {
+          email: email,
+        },
+      ],
       subject: "OTP Verification",
-      htmlContent: `<h2>Your OTP is: ${otp}</h2>`
+      htmlContent: `<h2>Your OTP is: ${otp}</h2>`,
     });
 
-    console.log("✅ OTP email sent");
+    console.log("✅ OTP email sent:", result);
     return true;
   } catch (err) {
     console.error("❌ EMAIL FAILED:", err);
