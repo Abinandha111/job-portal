@@ -55,7 +55,7 @@ appliedJobs: [
 
 role: {
     type: String,
-    enum: ["user", "recruiter", "admin"],
+    enum: ["user", "recruiter"],
     default: "user"
   },
   otp: {

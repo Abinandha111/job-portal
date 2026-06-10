@@ -123,10 +123,7 @@ function AppContent() {
           element={<RoleRoute role="recruiter"><RecruiterProfile /></RoleRoute>} 
         />
 
-        <Route
-          path="/admin/dashboard"
-          element={<RoleRoute role="admin"><AdminDashboard /></RoleRoute>}
-        />
+       
 
         {/* Fallback route */}
         <Route path="*" element={<Navigate to="/" replace />} />

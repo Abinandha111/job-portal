@@ -62,11 +62,7 @@ export default function Navbar() {
               </>
             )}
 
-            {user?.role === "admin" && (
-              <>
-                <Link to="/admin/dashboard" className={location.pathname === "/admin/dashboard" ? "active" : ""}>Admin Panel</Link>
-              </>
-            )}
+           
 
             <button onClick={handleLogout} className="logout-btn-nav">
               Logout
