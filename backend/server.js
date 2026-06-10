@@ -13,6 +13,7 @@ const userRoutes = require("./routes/user");
 const applicationRoutes = require("./routes/application");
 const jobRoutes = require("./routes/job");
 const recruiterRoute = require("./routes/recruiterRoute");
+const adminRoutes = require("./routes/admin");
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/application", applicationRoutes);
 app.use("/api/job", jobRoutes);
 app.use("/api/recruiter", recruiterRoute);
+app.use("/api/admin", adminRoutes);
 app.use("/upload", express.static(path.join(__dirname, "upload")));
 
 // Health route

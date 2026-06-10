@@ -1,7 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import API from "./data/api";
+import "./Login.css"; // Reuse login styles
 
 export default function VerifyResetOtp() {
   const [otp, setOtp] = useState("");
@@ -11,21 +12,22 @@ export default function VerifyResetOtp() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const email =
-    location.state?.email || localStorage.getItem("resetEmail");
+  const email = location.state?.email || localStorage.getItem("resetEmail");
 
-  // ❌ if email not found
   if (!email) {
     return (
-      <div>
-        <h3>Email not found</h3>
-        <p>Please restart forgot password process.</p>
+      <div className="login-container">
+        <div className="login-box text-center">
+          <h1>Session Expired</h1>
+          <p className="login-subtitle">Email not found. Please restart the password reset process.</p>
+          <Link to="/forgot-password" className="login-btn">Back to Reset</Link>
+        </div>
       </div>
     );
   }
 
-  // ✅ VERIFY OTP
-  const verifyOtp = async () => {
+  const verifyOtp = async (e) => {
+    e.preventDefault();
     if (!otp.trim()) {
       alert("Please enter OTP");
       return;
@@ -38,15 +40,14 @@ export default function VerifyResetOtp() {
       });
 
       alert(res.data.message || "OTP verified ✅");
-      setVerified(true); // unlock password field
-
+      setVerified(true);
     } catch (err) {
       alert(err.response?.data?.message || "Invalid OTP ❌");
     }
   };
 
-  // ✅ RESET PASSWORD
-  const resetPassword = async () => {
+  const resetPassword = async (e) => {
+    e.preventDefault();
     if (!newPassword.trim()) {
       alert("Please enter new password");
       return;
@@ -59,48 +60,55 @@ export default function VerifyResetOtp() {
       });
 
       alert(res.data.message || "Password reset successful 🎉");
-
       navigate("/login");
-
     } catch (err) {
       alert(err.response?.data?.message || "Reset failed ❌");
     }
   };
 
   return (
-    <div>
-      <h2>Reset Password</h2>
+    <div className="login-container">
+      <div className="login-box">
+        <h1>Verify & Reset</h1>
+        <p className="login-subtitle">We sent a verification code to {email}</p>
 
-      {/* OTP INPUT */}
-      <input
-        placeholder="Enter OTP"
-        value={otp}
-        onChange={(e) => setOtp(e.target.value)}
-      />
+        {!verified ? (
+          <form onSubmit={verifyOtp}>
+            <div className="form-group">
+              <label htmlFor="otp">Enter 6-Digit OTP</label>
+              <input
+                id="otp"
+                type="text"
+                placeholder="123456"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                maxLength={6}
+                required
+              />
+            </div>
+            <button type="submit" className="login-btn">Verify Code</button>
+          </form>
+        ) : (
+          <form onSubmit={resetPassword}>
+            <div className="form-group">
+              <label htmlFor="newPassword">New Password</label>
+              <input
+                id="newPassword"
+                type="password"
+                placeholder="••••••••"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                required
+              />
+            </div>
+            <button type="submit" className="login-btn">Update Password</button>
+          </form>
+        )}
 
-      <button onClick={verifyOtp}>Verify OTP</button>
-
-      <br /><br />
-
-      {/* PASSWORD INPUT (LOCKED until OTP verified) */}
-      <input
-        type="password"
-        placeholder="New Password"
-        value={newPassword}
-        disabled={!verified}
-        onChange={(e) => setNewPassword(e.target.value)}
-      />
-
-      <button
-        onClick={resetPassword}
-        disabled={!verified}
-        style={{
-          opacity: !verified ? 0.5 : 1,
-          cursor: !verified ? "not-allowed" : "pointer",
-        }}
-      >
-        Reset Password
-      </button>
+        <div className="login-footer">
+          <p>Remembered password? <Link to="/login">Back to Login</Link></p>
+        </div>
+      </div>
     </div>
   );
 }

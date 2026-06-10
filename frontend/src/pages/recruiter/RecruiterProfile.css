@@ -1,66 +1,128 @@
-.profile-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 40px;
-}
-
-.profile-card {
-  width: 400px;
-  padding: 20px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-.profile-info p {
-  margin: 10px 0;
-  font-size: 16px;
-}
-
-.profile-info span {
-  font-weight: bold;
-}
-
-input {
+.recruiter-profile-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 32px;
+  max-width: 600px;
   width: 100%;
-  padding: 10px;
-  margin: 8px 0;
-  border: 1px solid #ccc;
-  border-radius: 6px;
 }
 
-.edit-btn {
-  margin-top: 15px;
-  padding: 10px;
-  width: 100%;
-  background: #4a6cf7;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.save-btn {
-  background: green;
-  color: white;
-  padding: 10px;
-  border: none;
-  margin-right: 10px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.cancel-btn {
-  background: red;
-  color: white;
-  padding: 10px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.btn-group {
+.profile-details-view {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.detail-field-group h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-value-text {
+  font-size: 15px;
+  color: var(--primary);
+  font-weight: 600;
+  background-color: var(--bg-tertiary);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+}
+
+.edit-mode-btn {
+  background: var(--primary);
+  color: white;
+  align-self: flex-start;
+  padding: 10px 20px;
   margin-top: 10px;
+}
+
+.edit-mode-btn:hover {
+  background: var(--secondary);
+}
+
+/* Edit Form */
+.profile-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.profile-edit-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.profile-edit-form label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.form-actions-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 20px;
+}
+
+.save-changes-btn {
+  background: var(--accent);
+  color: white;
+  padding: 10px 20px;
+}
+
+.save-changes-btn:hover {
+  background: var(--accent-hover);
+}
+
+.cancel-edit-btn {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  padding: 10px 20px;
+}
+
+.cancel-edit-btn:hover {
+  background: var(--border-color);
+  color: var(--primary);
+}
+
+/* Danger Zone */
+.danger-zone-section {
+  margin-top: 32px;
+  border-top: 1px solid rgba(239, 68, 68, 0.15);
+  padding-top: 24px;
+}
+
+.danger-zone-section h3 {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--danger);
+  margin-bottom: 6px;
+}
+
+.danger-zone-section p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.delete-account-btn-profile {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.15);
+  color: var(--danger);
+  padding: 8px 18px;
+  font-size: 13px;
+}
+
+.delete-account-btn-profile:hover {
+  background: var(--danger);
+  color: white;
 }

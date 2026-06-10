@@ -1,89 +1,54 @@
-.addjob-container {
-  min-height: calc(100vh - 73px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 40px 20px;
-}
-
-.addjob-box {
-  background: var(--bg-card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-card);
-  padding: 45px 40px;
-  border-radius: var(--radius-md);
+.add-job-form-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 32px;
+  max-width: 720px;
   width: 100%;
-  max-width: 480px;
-  box-shadow: var(--shadow-lg);
-  transition: var(--transition-smooth);
 }
 
-.addjob-box:hover {
-  border-color: var(--border-card-hover);
-  box-shadow: var(--shadow-lg), 0 0 25px rgba(99, 102, 241, 0.1);
-}
-
-.addjob-box h1 {
-  font-size: 32px;
-  font-weight: 800;
-  text-align: center;
-  margin-bottom: 24px;
-  background: linear-gradient(135deg, #fff 0%, var(--text-secondary) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.addjob-box form {
+.job-creation-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
-.addjob-box input,
-.addjob-box textarea {
-  width: 100%;
-  padding: 14px 16px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--border-card);
-  border-radius: var(--radius-sm);
-  color: var(--text-primary);
-  font-size: 15px;
-  outline: none;
-  transition: var(--transition-smooth);
+.job-creation-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.addjob-box input:focus,
-.addjob-box textarea:focus {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
-}
-
-.addjob-box textarea {
-  resize: vertical;
-  min-height: 100px;
-}
-
-.addjob-box button {
-  width: 100%;
-  padding: 14px;
-  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-primary-hover) 100%);
-  color: white;
-  border: none;
-  border-radius: var(--radius-sm);
-  font-size: 16px;
+.job-creation-form label {
+  font-size: 13px;
   font-weight: 600;
-  cursor: pointer;
-  margin-top: 8px;
-  box-shadow: 0 4px 12px var(--accent-primary-glow);
+  color: var(--text-secondary);
 }
 
-.addjob-box button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.5);
+.job-creation-form .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
 }
 
-.addjob-box button:active {
-  transform: translateY(1px);
-}
+.submit-job-btn {
+  background: var(--accent);
+  color: white;
+  padding: 12px 24px;
+  font-weight: 600;
+  font-size: 14px;
+  align-self: flex-start;
+  margin-top: 10px;
+}
+
+.submit-job-btn:hover {
+  background: var(--accent-hover);
+  box-shadow: 0 4px 12px var(--accent-glow);
+}
+
+@media (max-width: 576px) {
+  .job-creation-form .form-row {
+    grid-template-columns: 1fr;
+  }
+}

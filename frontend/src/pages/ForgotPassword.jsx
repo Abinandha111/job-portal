@@ -1,13 +1,15 @@
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import API from "./data/api";
+import "./Login.css"; // Reuse login styles
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
 
-  const sendOtp = async () => {
+  const sendOtp = async (e) => {
+    e.preventDefault();
     if (!email.trim()) {
       alert("Please enter email");
       return;
@@ -19,25 +21,38 @@ export default function ForgotPassword() {
       });
 
       alert(res.data.message || "OTP sent 📩");
-
       navigate("/verify-reset-otp", { state: { email: email.trim() } });
-
     } catch (err) {
       alert(err.response?.data?.message || "Error sending OTP ❌");
     }
   };
 
   return (
-    <div>
-      <h2>Forgot Password</h2>
+    <div className="login-container">
+      <div className="login-box">
+        <h1>Reset Password</h1>
+        <p className="login-subtitle">We will send you a 6-digit OTP code to reset your password.</p>
+        
+        <form onSubmit={sendOtp}>
+          <div className="form-group">
+            <label htmlFor="email">Email Address</label>
+            <input
+              id="email"
+              type="email"
+              placeholder="john@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
 
-      <input
-        placeholder="Enter email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
+          <button type="submit" className="login-btn">Send OTP Code</button>
+        </form>
 
-      <button onClick={sendOtp}>Send OTP</button>
+        <div className="login-footer">
+          <p>Remembered password? <Link to="/login">Back to Login</Link></p>
+        </div>
+      </div>
     </div>
   );
 }

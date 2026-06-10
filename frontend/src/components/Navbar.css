@@ -5,43 +5,42 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 40px;
-  background: rgba(9, 13, 22, 0.75);
+  padding: 14px 48px;
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
   transition: var(--transition-smooth);
 }
 
 .brand-logo {
-  font-family: var(--font-title);
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 800;
   letter-spacing: -0.5px;
-  color: var(--text-primary);
+  color: var(--primary);
   display: flex;
   align-items: center;
 }
 
 .brand-logo span {
-  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-right: 2px;
+  color: var(--accent);
+  margin-right: 1px;
 }
 
 .navbar-links {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 28px;
 }
 
 .navbar-links a {
   color: var(--text-secondary);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
   position: relative;
   padding: 6px 0;
+  transition: var(--transition-smooth);
 }
 
 .navbar-links a::after {
@@ -51,13 +50,13 @@
   left: 0;
   width: 0;
   height: 2px;
-  background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+  background: var(--accent);
   transition: var(--transition-smooth);
   border-radius: 2px;
 }
 
 .navbar-links a:hover {
-  color: var(--text-primary);
+  color: var(--primary);
 }
 
 .navbar-links a:hover::after,
@@ -66,36 +65,37 @@
 }
 
 .navbar-links a.active {
-  color: var(--text-primary);
+  color: var(--primary);
   font-weight: 600;
 }
 
 /* Auth Buttons in Navbar */
-.register-btn-nav, .profile-btn-nav {
-  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-primary-hover) 100%);
+.register-btn-nav {
+  background: var(--accent);
   color: white !important;
-  padding: 8px 20px !important;
+  padding: 8px 18px !important;
   border-radius: var(--radius-sm);
   font-weight: 600 !important;
-  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.2);
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.1);
 }
 
-.register-btn-nav:hover, .profile-btn-nav:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(99, 102, 241, 0.4);
+.register-btn-nav:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
 }
 
-.register-btn-nav::after, .profile-btn-nav::after {
+.register-btn-nav::after {
   display: none !important;
 }
 
 .logout-btn-nav {
-  background: rgba(244, 63, 94, 0.1);
-  border: 1px solid rgba(244, 63, 94, 0.2);
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.15);
   color: var(--danger);
-  padding: 8px 16px;
+  padding: 6px 14px;
   border-radius: var(--radius-sm);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: var(--transition-smooth);
@@ -104,22 +104,35 @@
 .logout-btn-nav:hover {
   background: var(--danger);
   color: white;
-  box-shadow: 0 4px 12px var(--danger-glow);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 /* Responsive Navbar */
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .navbar-container {
-    padding: 16px 20px;
+    padding: 14px 24px;
   }
   .navbar-links {
     gap: 16px;
   }
   .navbar-links a {
-    font-size: 14px;
+    font-size: 13px;
   }
-  .register-btn-nav, .profile-btn-nav {
-    padding: 6px 12px !important;
+  .register-btn-nav {
+    padding: 6px 14px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-container {
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+  .navbar-links {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
   }
 }

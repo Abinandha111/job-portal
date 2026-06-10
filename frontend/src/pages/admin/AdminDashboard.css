@@ -1,0 +1,245 @@
+.admin-dashboard-container {
+  padding: 40px 80px;
+  background-color: var(--bg-primary);
+  min-height: calc(100vh - 80px);
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.admin-header {
+  margin-bottom: 32px;
+}
+
+.admin-header h1 {
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 4px;
+}
+
+.admin-header p {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* Metrics Row */
+.admin-metrics-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.admin-metric-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-metric-card .card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.admin-metric-card .title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-metric-card h3 {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1;
+}
+
+.admin-metric-card .icon {
+  font-size: 32px;
+  background-color: var(--bg-tertiary);
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+}
+
+/* Tabs Cockpit */
+.tabs-header {
+  display: flex;
+  gap: 16px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 24px;
+}
+
+.tab-btn {
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 15px;
+  font-weight: 600;
+  padding: 12px 18px;
+  border-radius: 0;
+  border-bottom: 2px solid transparent;
+  transition: var(--transition-smooth);
+}
+
+.tab-btn:hover {
+  color: var(--primary);
+}
+
+.tab-btn.active {
+  color: var(--accent-hover);
+  border-bottom-color: var(--accent);
+}
+
+/* Management Panel Layout */
+.management-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.panel-actions-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.panel-actions-row h3 {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.search-input-admin {
+  max-width: 320px;
+}
+
+/* Data Tables */
+.admin-table-wrapper {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.admin-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.admin-data-table th {
+  background-color: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.admin-data-table td {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
+  font-size: 14px;
+}
+
+.admin-data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-data-table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.user-profile-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.role-select-admin {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  max-width: 160px;
+}
+
+.delete-user-action-btn {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.15);
+  color: var(--danger);
+  font-size: 12px;
+  padding: 6px 12px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  transition: var(--transition-smooth);
+}
+
+.delete-user-action-btn:hover {
+  background: var(--danger);
+  color: white;
+}
+
+.table-meta-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+}
+
+.toggle-status-btn-admin {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  border: 1px solid var(--border-color);
+}
+
+.toggle-status-btn-admin.active {
+  background-color: var(--accent-light);
+  color: var(--accent-hover);
+  border-color: rgba(16, 185, 129, 0.2);
+}
+
+.toggle-status-btn-admin.closed {
+  background-color: rgba(239, 68, 68, 0.08);
+  color: var(--danger);
+  border-color: rgba(239, 68, 68, 0.15);
+}
+
+@media (max-width: 992px) {
+  .admin-dashboard-container {
+    padding: 40px 24px;
+  }
+  .admin-data-table {
+    display: block;
+    overflow-x: auto;
+  }
+}

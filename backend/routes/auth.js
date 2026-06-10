@@ -30,7 +30,7 @@ router.post("/register", async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      role: role === "recruiter" ? "recruiter" : "user",
+      role: ["recruiter", "admin"].includes(role) ? role : "user",
       otp,
       otpExpire: Date.now() + 5 * 60 * 1000,
     });
@@ -190,7 +190,7 @@ router.post("/login", async (req, res) => {
     }
 
     const token = jwt.sign(
-      { userId: user._id },
+      { userId: user._id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );

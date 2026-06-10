@@ -1,73 +1,85 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import "./Login.css"
+import "./Login.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import API from "./data/api";
 
 export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    const navigate = useNavigate();
+    try {
+      const res = await axios.post(`${API}/api/auth/login`, {
+        email,
+        password
+      });
 
-     const handleSubmit = async (e) => {
-        e.preventDefault();
+      console.log(res.data);
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      localStorage.setItem("token", res.data.token);
+      const user = res.data.user;
+      localStorage.setItem("user", JSON.stringify(user));
 
-         try {
-        const res = await axios.post(`${API}/api/auth/login`, {
-            email,
-            password
-        });
+      if (user.role === "admin") {
+        navigate("/admin/dashboard");
+      } else if (user.role === "recruiter") {
+        navigate("/recruiter/dashboard");
+      } else {
+        navigate("/jobs");
+      }
+    } catch (error) {
+      console.log(error.response?.data);
+      alert(error.response?.data?.error || "Login failed ❌");
+    }
+  };
 
-        console.log(res.data);
-        localStorage.removeItem("user");
-        localStorage.removeItem("token");
-        localStorage.setItem("token", res.data.token);
-        const user = res.data.user;
-        localStorage.setItem("user", JSON.stringify(res.data.user));
-
+  return (
+    <div className="login-container">
+      <div className="login-box">
+        <h1>Welcome Back</h1>
+        <p className="login-subtitle">Sign in to your CareerHub account</p>
         
-        
-        
-       if (user.role === "recruiter") {
-  navigate("/recruiter/dashboard");
-} else {
-  navigate("/jobs");
-}
-  
+        <form onSubmit={handleSubmit} autoComplete="off">
+          <div className="form-group">
+            <label htmlFor="email">Email Address</label>
+            <input 
+              id="email"
+              type="email" 
+              placeholder="name@company.com"  
+              autoComplete="off" 
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)} 
+              required
+            />
+          </div>
 
-      
-}catch (error) {
-  console.log(error.response?.data);
-  alert(error.response?.data?.error || "Login failed ❌");
-}
-    };
-    return (
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input 
+              id="password"
+              type="password" 
+              placeholder="••••••••"  
+              autoComplete="new-password" 
+              value={password} 
+              onChange={(e) => setPassword(e.target.value)} 
+              required
+            />
+          </div>
+          
+          <button type="submit" className="login-btn">Sign In</button>
+        </form>
 
-        
-        <div className="login-container">
-            <div className="login-box">
-            <h1>Login</h1>
-            <form onSubmit={handleSubmit} autoComplete="off">
-                
-                    <input type="email" placeholder="Email"  autoComplete="off" value={email} onChange={(e) => setEmail(e.target.value)} />
-
-                    <input type="password" placeholder="Password"  autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                    
-                    <button type="submit">Login</button>
-
-                    
-            </form>
-
-            <p> Don't have an account?{" "}
-                <Link to="/register">Register</Link>
-            </p>
-            
-            <Link to="/forgot-password">Forgot Password?</Link>
-
-            </div>
+        <div className="login-footer">
+          <p>Don't have an account? <Link to="/register">Register</Link></p>
+          <Link to="/forgot-password" className="forgot-link">Forgot Password?</Link>
         </div>
-    );
+      </div>
+    </div>
+  );
 }

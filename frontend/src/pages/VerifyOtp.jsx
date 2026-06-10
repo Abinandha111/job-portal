@@ -10,17 +10,13 @@ export default function VerifyOtp() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const email =
-    location.state?.email || localStorage.getItem("otpEmail");
-
+  const email = location.state?.email || localStorage.getItem("otpEmail");
   const [canVerify, setCanVerify] = useState(false);
 
-  // enable verify button
   useEffect(() => {
     setCanVerify(otp.join("").length === 6);
   }, [otp]);
 
-  // OTP input
   const handleChange = (value, index) => {
     if (isNaN(value)) return;
 
@@ -39,8 +35,8 @@ export default function VerifyOtp() {
     }
   };
 
-  // VERIFY OTP
-  const verifyOtp = async () => {
+  const verifyOtp = async (e) => {
+    e.preventDefault();
     const finalOtp = otp.join("");
 
     try {
@@ -49,9 +45,8 @@ export default function VerifyOtp() {
         otp: finalOtp,
       });
 
-      alert("Verified Successfully ✅");
+      alert("Email verified successfully ✅");
       navigate("/login");
-
     } catch (err) {
       alert(err.response?.data?.message || "Invalid OTP ❌");
     }
@@ -60,36 +55,34 @@ export default function VerifyOtp() {
   return (
     <div className="otp-container">
       <div className="otp-box">
+        <h1>OTP Verification</h1>
+        <p className="otp-desc">We sent a 6-digit confirmation code to</p>
+        <p className="otp-email-text">{email}</p>
 
-        <h2>OTP Verification</h2>
-        <p>Enter the 6-digit code sent to</p>
-        <p className="email">{email}</p>
+        <form onSubmit={verifyOtp}>
+          <div className="otp-inputs">
+            {otp.map((digit, index) => (
+              <input
+                key={index}
+                ref={(el) => (inputsRef.current[index] = el)}
+                type="text"
+                maxLength="1"
+                value={digit}
+                onChange={(e) => handleChange(e.target.value, index)}
+                onKeyDown={(e) => handleKeyDown(e, index)}
+                required
+              />
+            ))}
+          </div>
 
-        <div className="otp-inputs">
-          {otp.map((digit, index) => (
-            <input
-              key={index}
-              ref={(el) => (inputsRef.current[index] = el)}
-              type="text"
-              maxLength="1"
-              value={digit}
-              onChange={(e) => handleChange(e.target.value, index)}
-              onKeyDown={(e) => handleKeyDown(e, index)}
-            />
-          ))}
-        </div>
-
-        <button
-          onClick={verifyOtp}
-          disabled={!canVerify}
-          style={{
-            opacity: !canVerify ? 0.5 : 1,
-            cursor: !canVerify ? "not-allowed" : "pointer",
-          }}
-        >
-          Verify OTP
-        </button>
-
+          <button
+            type="submit"
+            className="verify-btn"
+            disabled={!canVerify}
+          >
+            Verify OTP Code
+          </button>
+        </form>
       </div>
     </div>
   );

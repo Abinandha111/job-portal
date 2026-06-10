@@ -1,98 +1,86 @@
 .register-container {
-  min-height: calc(100vh - 73px);
+  min-height: calc(100vh - 80px);
   display: flex;
-  justify-content: center;
   align-items: center;
-  padding: 20px;
+  justify-content: center;
+  background-color: var(--bg-primary);
+  padding: 24px;
 }
 
 .register-box {
-  background: var(--bg-card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-card);
-  padding: 45px 40px;
-  border-radius: var(--radius-md);
-  width: 100%;
-  max-width: 420px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  padding: 40px;
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
-  text-align: center;
-  transition: var(--transition-smooth);
-}
-
-.register-box:hover {
-  border-color: var(--border-card-hover);
-  box-shadow: var(--shadow-lg), 0 0 25px rgba(99, 102, 241, 0.1);
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
 }
 
 .register-box h1 {
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 800;
-  margin-bottom: 8px;
-  background: linear-gradient(135deg, #fff 0%, var(--text-secondary) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--primary);
+  margin-bottom: 6px;
+  text-align: center;
 }
 
-.register-box form {
-  margin-top: 30px;
+.register-subtitle {
+  color: var(--text-secondary);
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.form-group {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
+  margin-bottom: 16px;
 }
 
-.register-box input {
-  width: 100%;
-  padding: 14px 16px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--border-card);
-  border-radius: var(--radius-sm);
-  color: var(--text-primary);
-  font-size: 15px;
-  transition: var(--transition-smooth);
-}
-
-.register-box input:focus {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
-}
-
-.register-box button {
-  width: 100%;
-  padding: 14px;
-  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-primary-hover) 100%);
-  color: white;
-  border: none;
-  border-radius: var(--radius-sm);
-  font-size: 16px;
+.form-group label {
+  font-size: 13px;
   font-weight: 600;
-  cursor: pointer;
-  margin-top: 8px;
-  box-shadow: 0 4px 12px var(--accent-primary-glow);
+  color: var(--text-secondary);
+  text-align: left;
 }
 
-.register-box button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.5);
+.register-btn {
+  background: var(--accent);
+  color: white;
+  width: 100%;
+  padding: 12px;
+  font-weight: 600;
+  font-size: 15px;
+  margin-top: 10px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.register-box button:active {
-  transform: translateY(1px);
+.register-btn:hover {
+  background: var(--accent-hover);
+  box-shadow: 0 4px 12px var(--accent-glow);
 }
 
-.register-box p {
+.register-footer {
+  display: flex;
+  justify-content: center;
   margin-top: 24px;
-  font-size: 14px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 20px;
+  font-size: 13px;
+}
+
+.register-footer p {
   color: var(--text-secondary);
 }
 
-.register-box p a {
-  color: var(--accent-secondary);
+.register-footer p a {
   font-weight: 600;
+  color: var(--accent);
 }
-
-.register-box p a:hover {
-  color: var(--text-primary);
-  text-decoration: underline;
-}

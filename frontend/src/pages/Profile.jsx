@@ -7,7 +7,6 @@ import { Link, useNavigate } from "react-router-dom";
 export default function Profile() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
 
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -20,25 +19,23 @@ export default function Profile() {
   const [bio, setBio] = useState("");
   const [skills, setSkills] = useState("");
 
+  const navigate = useNavigate();
 
-
-  // FETCH USER
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const token = localStorage.getItem("token");
-
         const res = await axios.get(
           `${API}/api/user/profile`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
         setUser(res.data);
-
         setPhone(res.data.phone || "");
         setBio(res.data.bio || "");
         setSkills(res.data.skills || "");
         setResume(res.data.resume || "");
+        setForm({ username: res.data.username, email: res.data.email, password: "" });
 
         setLoading(false);
       } catch (err) {
@@ -46,392 +43,372 @@ export default function Profile() {
         setLoading(false);
       }
     };
-
     fetchUser();
   }, []);
 
-  // LOGOUT
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    window.location.href = "/login";
-  };
-
-  // OPEN EDIT
   const openEdit = () => {
-    setForm({ username: user.username, email: user.email ,password: ""});
+    setForm({ username: user.username, email: user.email, password: "" });
     setEditMode(true);
   };
 
-  // UPDATE PROFILE
-  const updateProfile = async () => {
+  const uploadImage = async () => {
+    if (!image) {
+      alert("Please select an image first");
+      return;
+    }
+
     try {
+      setUploading(true);
+      const formData = new FormData();
+      formData.append("image", image);
       const token = localStorage.getItem("token");
 
+      const res = await axios.post(
+        `${API}/api/user/upload`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      setUser({
+        ...user,
+        image: res.data.image
+      });
+
+      setImage(null);
+      setPreview(null);
+      alert("Profile picture updated successfully ✅");
+    } catch (err) {
+      console.log(err);
+      alert("Failed to upload image ❌");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const uploadResume = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      const formData = new FormData();
+      formData.append("resume", file);
+      const token = localStorage.getItem("token");
+
+      const res = await axios.post(
+        `${API}/api/user/upload-resume`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data"
+          }
+        }
+      );
+
+      setUser({
+        ...user,
+        resume: res.data.resume
+      });
+      alert("Resume uploaded successfully ✅");
+    } catch (error) {
+      console.log(error);
+      alert("Failed to upload resume ❌");
+    }
+  };
+
+  const deleteResume = async () => {
+    if (!window.confirm("Are you sure you want to delete your resume?")) return;
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`${API}/api/user/delete-resume`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      setUser({
+        ...user,
+        resume: ""
+      });
+      alert("Resume deleted successfully ✅");
+    } catch (error) {
+      console.log(error);
+      alert("Failed to delete resume ❌");
+    }
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem("token");
       const res = await axios.put(
         `${API}/api/user/update`,
-        form,
-        { headers: { Authorization: `Bearer ${token}` } }
+        { 
+          ...form,
+          phone,
+          bio,
+          skills
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
       );
 
       setUser(res.data);
       setEditMode(false);
-    } catch (err) {
-      console.log(err);
+      alert("Profile updated successfully ✅");
+    } catch (error) {
+      console.log(error);
+      alert("Update failed ❌");
     }
   };
 
-  // UPLOAD IMAGE
-  const uploadImage = async () => {
-  if (!image) {
-    alert("Please select an image");
-    return;
-  }
+  const deleteAccount = async () => {
+    const confirmDelete = window.confirm("WARNING: This will permanently delete your account. Are you sure?");
+    if (!confirmDelete) return;
 
-  try {
-    setUploading(true);
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`${API}/api/user/delete-account`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
 
-    const formData = new FormData();
-    formData.append("image", image);
+      localStorage.clear();
+      alert("Account deleted successfully");
+      navigate("/register");
+    } catch (err) {
+      console.log(err);
+      alert("Delete failed");
+    }
+  };
 
-    const token = localStorage.getItem("token");
-
-    const res = await axios.post(
-      `${API}/api/user/upload`,
-      formData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
-
-    setUser({
-      ...user,
-      image: res.data.image
-    });
-
-    setImage(null);
-    setPreview(null);
-
-    alert("Image uploaded successfully");
-
-  } catch (err) {
-    console.log(err);
-  } finally {
-    setUploading(false);
-  }
-};
-
-const uploadResume = async () => {
-  if (!resume) return;
-
-  try {
-    const formData = new FormData();
-
-    formData.append("resume", resume);
-
-    const token = localStorage.getItem("token");
-
-    const res =await axios.post(
-      `${API}/api/user/upload-resume`,
-      formData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data"
-        }
-      }
-    );
-
-    setUser({
-  ...user,
-  resume: res.data.resume
-});
-
-    alert("Resume uploaded successfully");
-
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const deleteResume = async () => {
-  try {
-
-    const token = localStorage.getItem("token");
-
-    await axios.delete(
-      `${API}/api/user/delete-resume`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
-    );
-
-    setUser({
-      ...user,
-      resume: ""
-    });
-
-    alert("Resume deleted successfully");
-
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-  const handleUpdate = async () => {
-
-  try {
-
-    const token = localStorage.getItem("token");
-
-    const res = await axios.put(
-      `${API}/api/user/update`,
-      { 
-        ...form,
-        phone,
-        bio,
-        skills
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
-    );
-
-    alert("Profile updated successfully ✅");
-
-  } catch (error) {
-
-    console.log(error);
-    alert("Update failed ❌");
-
-  }
-};
-
-const token = localStorage.getItem("token");
-const navigate = useNavigate();
-
-const deleteAccount = async () => {
-  const confirmDelete = window.confirm("Are you sure you want to delete your account?");
-  if (!confirmDelete) return;
-
-  try {
-    await axios.delete(`${API}/api/user/delete-account`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-
-    localStorage.clear();
-    alert("Account deleted successfully");
-
-    
-
-    navigate("/register"); // redirect
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-  if (loading) return <h2>Loading...</h2>;
-  if (!user) return <h2>No user data found</h2>;
+  if (loading) return <div className="loading">Loading profile details...</div>;
+  if (!user) return <div className="loading error">No user session found. Please sign in again.</div>;
 
   return (
-    <div className={darkMode ? "dark" : "light"}>
-
-      <div className="profile-container">
-        <div className="profile-card">
-
-          {/* TOP ACTIONS */}
-          <div className="top-actions">
-            <button onClick={() => setDarkMode(!darkMode)}>
-              {darkMode ? "Light ☀️" : "Dark 🌙"}
-            </button>
-
-            <button className="logout" onClick={handleLogout}>
-              Logout
-            </button>
-          </div>
-           <div className="cover-banner"></div>
-
-          {/* PROFILE TOP */}
-          <div className="profile-top">
-            <img
-              src={
-                user.image
-                  ? `${API}/upload/${user.image}`
-                  : "https://ui-avatars.com/api/?name=User&background=random"
-              }
-              className="profile-img"
-            />
+    <div className="profile-page-wrapper">
+      <div className="profile-layout-grid">
+        
+        {/* Left Column: Brief summary + Photo Card */}
+        <div className="profile-side-column">
+          <div className="profile-summary-card">
+            <div className="profile-card-cover"></div>
             
-  
+            <div className="profile-avatar-container">
+              <img
+                src={
+                  user.image
+                    ? `${API}/upload/${user.image}`
+                    : "https://ui-avatars.com/api/?name=User&background=random"
+                }
+                alt={user.username}
+                className="profile-avatar-img"
+              />
+              
+              <label className="change-avatar-label">
+                📷
+                <input
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      setImage(file);
+                      setPreview(URL.createObjectURL(file));
+                    }
+                  }}
+                />
+              </label>
+            </div>
+
+            {preview && (
+              <div className="avatar-preview-box">
+                <img src={preview} alt="Preview" className="avatar-preview-thumbnail" />
+                <button onClick={uploadImage} disabled={uploading} className="upload-avatar-btn">
+                  {uploading ? "Saving..." : "Confirm Photo"}
+                </button>
+              </div>
+            )}
 
             <h2>{user.username}</h2>
-            <p className="email">{user.email}</p>
+            <p className="user-email">{user.email}</p>
+            <span className="profile-role-badge">Job Seeker</span>
 
+            <div className="profile-stats-mini">
+              <Link to="/applied-jobs" className="mini-stat-item">
+                <span className="stat-count">{user.appliedCount || 0}</span>
+                <span className="stat-label">Applications</span>
+              </Link>
+              <Link to="/saved-jobs" className="mini-stat-item">
+                <span className="stat-count">{user.savedJobs?.length || 0}</span>
+                <span className="stat-label">Saved</span>
+              </Link>
+            </div>
+          </div>
+
+          {/* Resume Upload Card */}
+          <div className="resume-widget-card">
+            <h3>Resume CV</h3>
+            <p className="widget-desc">Upload a PDF copy of your CV to attach during job applications.</p>
+            
             {user.resume ? (
-    <a
-      href={`${API}/upload/${user.resume}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="resume-link"
-    >
-      📄 View Resume
-    </a>
-  ) : (
-    <p>No Resume Uploaded</p>
-  )}
-
-<h3>Resume Upload</h3>
-
-  <input
-    type="file"
-    accept=".pdf"
-    onChange={(e) => setResume(e.target.files[0])}
-  />
-
-  <button onClick={uploadResume}>
-    Upload Resume
-  </button>
-
-  {user.resume && (
-  <button
-    onClick={deleteResume}
-    className="delete-resume-btn"
-  >
-    Delete Resume
-  </button>
-)}
-
-          
-
-             <div className="bio-section">
-            <p>{bio || "No bio added yet..."}</p>
+              <div className="active-resume-status">
+                <div className="resume-icon-details">
+                  <span className="resume-icon">📄</span>
+                  <a
+                    href={user.resume.startsWith("http") ? user.resume : `${API}/upload/${user.resume}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="resume-download-link"
+                  >
+                    View Current CV
+                  </a>
+                </div>
+                <button onClick={deleteResume} className="delete-resume-btn">Remove CV</button>
+              </div>
+            ) : (
+              <div className="no-resume-status">
+                <label className="resume-picker-btn">
+                  Select PDF
+                  <input
+                    type="file"
+                    accept=".pdf"
+                    hidden
+                    onChange={uploadResume}
+                  />
+                </label>
+                <span className="file-hint">Max file size 5MB</span>
+              </div>
+            )}
           </div>
-          <div className="skills-section">
-            {skills &&
-              skills.split(",").map((skill, i) => (
-                <span key={i} className="skill-tag">
-                  {skill.trim()}
-                </span>
-              ))}
-          </div>
-          </div>
-          
-
-          {/* INFO CARDS */}
-          <div className="info-cards">
-            <div className="card">
-              <h4>User ID</h4>
-              <p>{user._id.slice(0, 8)}...</p>
-            </div>
-          </div>
-
-           <div className="stats">
-<Link to="/applied-jobs" className="stat-link">
-  <div className="stat-box">
-    <h4>Applied Jobs</h4>
-    <p>{user.appliedCount || 0}</p>
-  </div>
-</Link>
-
-<Link to="/saved-job" className="stat-link">
-  <div className="stat-box">
-    <h4>Saved Jobs</h4>
-    <p>{user.savedJobs?.length || 0}</p>
-  </div>
-</Link>
-
-  <div className="stat-box">
-    <h4>Status</h4>
-    <p className={`status ${
-    user?.status === "Inactive"
-      ? "inactive"
-      : user?.status === "Active"
-      ? "active"
-      : "active"
-    }`}> {
-      user?.status || "Active"
-    }</p>
-  </div>
-
-</div>
-          {/* EDIT */}
-          <button className="edit-btn" onClick={openEdit}>
-            Edit Profile
-          </button>
-
-          {editMode && (
-            <div className="edit-box">
-              <input
-                value={form.username}
-                onChange={(e) =>
-                  setForm({ ...form, username: e.target.value })
-                }
-                placeholder="Username"
-              />
-
-              <input
-                value={form.email}
-                onChange={(e) =>
-                  setForm({ ...form, email: e.target.value })
-                }
-                placeholder="Email"
-              />
-
-              
-              <input type="password" value={form.password} onChange={(e) => setForm({ 
-            ...form, password: e.target.value 
-          })}
-          placeholder="New Password" />
-
-          <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone"/>
-
-          <textarea value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Bio" />
-
-          <input value={skills} onChange={(e) => setSkills(e.target.value)} placeholder="Skills" />
-
-              <button onClick={handleUpdate}>Save</button>
-              <button onClick={() => setEditMode(false)}>Cancel</button>
-            </div>
-          )}
-
-          {/* UPLOAD */}
-          <div className="upload-box">
-            <label className="upload-area">
-              <input
-                type="file"
-                hidden
-                onChange={(e) => {
-                  const file = e.target.files[0];
-                  setImage(file);
-                  setPreview(URL.createObjectURL(file));
-                }}
-              />
-
-              {preview ? (
-                <img src={preview} className="preview-img" />
-              ) : (
-                <p>Click to change image</p>
-              )}
-            </label>
-
-            <button onClick={uploadImage} disabled={uploading}>
-              {uploading ? "Uploading..." : "Upload"}
-            </button>
-          </div>
-
-          <button className="delete-account-btn" onClick={deleteAccount}>🗑️ Delete Account</button>
-
         </div>
-      </div>
 
+        {/* Right Column: Settings Form / Profile Editing */}
+        <div className="profile-details-column">
+          <div className="profile-form-card">
+            <div className="form-card-header">
+              <h2>Account Settings</h2>
+              <p>Update your profile particulars, phone, and professional skills.</p>
+            </div>
+
+            {!editMode ? (
+              <div className="profile-details-view">
+                <div className="detail-field-group">
+                  <h4>Bio</h4>
+                  <p className="bio-text-display">{bio || "No professional bio added yet. Write one to stand out to employers!"}</p>
+                </div>
+
+                <div className="detail-field-group">
+                  <h4>Skills</h4>
+                  <div className="skills-tags-display">
+                    {skills ? (
+                      skills.split(",").map((skill, i) => (
+                        <span key={i} className="skill-badge">
+                          {skill.trim()}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="no-skills-text">No skills listed yet. Add skills separated by commas.</span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="detail-info-row">
+                  <div>
+                    <h4>Phone</h4>
+                    <p>{phone || "Not specified"}</p>
+                  </div>
+                  <div>
+                    <h4>Primary Email</h4>
+                    <p>{user.email}</p>
+                  </div>
+                </div>
+
+                <button onClick={openEdit} className="edit-mode-btn">Edit Profile Info</button>
+              </div>
+            ) : (
+              <form onSubmit={handleUpdate} className="profile-edit-form">
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Full Name</label>
+                    <input 
+                      value={form.username}
+                      onChange={(e) => setForm({ ...form, username: e.target.value })}
+                      placeholder="Username"
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Email Address</label>
+                    <input 
+                      value={form.email}
+                      onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      placeholder="Email"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Phone Number</label>
+                    <input 
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="+1 (555) 000-0000"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>New Password (Optional)</label>
+                    <input 
+                      type="password"
+                      value={form.password}
+                      onChange={(e) => setForm({ ...form, password: e.target.value })}
+                      placeholder="Change Password"
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label>Professional Bio</label>
+                  <textarea 
+                    value={bio}
+                    onChange={(e) => setBio(e.target.value)}
+                    placeholder="Describe your qualifications, background, and career goals..."
+                    rows={4}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Skills (comma separated)</label>
+                  <input 
+                    value={skills}
+                    onChange={(e) => setSkills(e.target.value)}
+                    placeholder="React, Node.js, Express, MongoDB, UI/UX"
+                  />
+                  <span className="input-hint-text">Separate skills with commas so they render as searchable tags.</span>
+                </div>
+
+                <div className="form-actions-buttons">
+                  <button type="submit" className="save-changes-btn">Save Changes</button>
+                  <button type="button" onClick={() => setEditMode(false)} className="cancel-edit-btn">Cancel</button>
+                </div>
+              </form>
+            )}
+
+            <div className="danger-zone-section">
+              <h3>Danger Zone</h3>
+              <p>Deleting your account will remove all application history, saved positions, and profile details permanently. This action cannot be undone.</p>
+              <button onClick={deleteAccount} className="delete-account-btn-profile">Delete My Account</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
   );
 }

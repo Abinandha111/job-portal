@@ -18,6 +18,7 @@ import MyJobs from "./pages/recruiter/MyJobs";
 import Applicants from "./pages/recruiter/Applicants";
 import RoleRoute from "./components/RoleRoute";
 import RecruiterProfile from "./pages/recruiter/RecruiterProfile";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 
 export default function App() {
   return (
@@ -26,8 +27,9 @@ export default function App() {
     </BrowserRouter>
   );
 }
+
 function AppContent() {
-const user = (() => {
+  const user = (() => {
     try {
       return JSON.parse(localStorage.getItem("user") || "null");
     } catch (err) {
@@ -40,12 +42,16 @@ const user = (() => {
   if (user) {
     const path = location.pathname;
 
-    if (user.role === "recruiter" && path.startsWith("/user")) {
+    if (user.role === "recruiter" && (path.startsWith("/user") || path.startsWith("/admin") || path === "/jobs" || path === "/profile")) {
       return <Navigate to="/recruiter/dashboard" replace />;
     }
 
-    if (user.role === "user" && path.startsWith("/recruiter")) {
+    if (user.role === "user" && (path.startsWith("/recruiter") || path.startsWith("/admin"))) {
       return <Navigate to="/user/dashboard" replace />;
+    }
+
+    if (user.role === "admin" && (path.startsWith("/user") || path.startsWith("/recruiter") || path === "/jobs" || path === "/profile")) {
+      return <Navigate to="/admin/dashboard" replace />;
     }
   }
 
@@ -109,13 +115,22 @@ const user = (() => {
 
         <Route  
           path="/recruiter/applicants/:jobId"  
-          element={<RoleRoute role="recruiter"><Applicants /></RoleRoute> }
+          element={<RoleRoute role="recruiter"><Applicants /></RoleRoute>}
         />
 
-        <Route path="/recruiter/profile" element={<RoleRoute role="recruiter"><RecruiterProfile /></RoleRoute>} />
-      </Routes>
+        <Route 
+          path="/recruiter/profile" 
+          element={<RoleRoute role="recruiter"><RecruiterProfile /></RoleRoute>} 
+        />
 
-      
+        <Route
+          path="/admin/dashboard"
+          element={<RoleRoute role="admin"><AdminDashboard /></RoleRoute>}
+        />
+
+        {/* Fallback route */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </>
   );
 }
