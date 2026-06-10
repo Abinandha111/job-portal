@@ -18,7 +18,7 @@ import MyJobs from "./pages/recruiter/MyJobs";
 import Applicants from "./pages/recruiter/Applicants";
 import RoleRoute from "./components/RoleRoute";
 import RecruiterProfile from "./pages/recruiter/RecruiterProfile";
-import AdminDashboard from "./pages/admin/AdminDashboard";
+
 
 export default function App() {
   return (
