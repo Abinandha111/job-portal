@@ -199,14 +199,16 @@ export default function Profile() {
             
             <div className="profile-avatar-container">
               <img
-                src={
-                  user.image
-                    ? `${API}/upload/${user.image}`
-                    : "https://ui-avatars.com/api/?name=User&background=random"
-                }
-                alt={user.username}
-                className="profile-avatar-img"
-              />
+  src={
+    user.image
+      ? `${API}/upload/${user.image}`
+      : `https://ui-avatars.com/api/?name=${encodeURIComponent(
+          user.username
+        )}&background=random`
+  }
+  alt={user.username}
+  className="profile-avatar-img"
+/>
               
               <label className="change-avatar-label">
                 📷
